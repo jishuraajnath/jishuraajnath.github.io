@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedWrite AI — Quality Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+:root {
+  --bg:        #F3F3F3;
+  --canvas:    #FFFFFF;
+  --surface:   #FAFAFA;
+  --ribbon:    #F7F7F7;
+  --border:    #E2E2E2;
+  --border2:   #CECECE;
+  --text:      #1A1A1A;
+  --muted:     #5A5A5A;
+  --dim:       #9A9A9A;
+  --red:       rgb(255,77,79);
+  --red-bg:    rgba(255,77,79,0.08);
+  --red-border:rgba(255,77,79,0.3);
+  --amber:     #D97706;
+  --amber-bg:  rgba(217,119,6,0.08);
+  --blue:      #1D6FA4;
+  --blue-bg:   rgba(29,111,164,0.08);
+  --green:     #1A7F4B;
+  --green-bg:  rgba(26,127,75,0.08);
+  --shadow:    0 2px 8px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --sans:      'DM Sans', sans-serif;
+  --mono:      'DM Mono', monospace;
+  --serif:     'Source Serif 4', serif;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* ── TOPBAR / RIBBON ── */
+.topbar {
+  height: 44px;
+  background: var(--red);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  flex-shrink: 0;
+}
+
+.logo {
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.logo-icon {
+  width: 22px; height: 22px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700; color: #fff;
+}
+
+.topbar-center {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.8);
+  background: rgba(0,0,0,0.12);
+  padding: 0.25rem 0.8rem;
+  border-radius: 3px;
+}
+
+.topbar-right { display: flex; align-items: center; gap: 0.6rem; }
+
+.badge {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0.18rem 0.5rem;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+}
+.badge-scan { background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.4); }
+.badge-done { background: rgba(255,255,255,0.9); color: var(--red); border: 1px solid #fff; display:none; }
+
+.btn {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.32rem 0.85rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-white {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.35);
+}
+.btn-white:hover { background: rgba(255,255,255,0.25); }
+.btn-solid {
+  background: #fff;
+  color: var(--red);
+  font-weight: 600;
+}
+.btn-solid:hover { background: #f5f5f5; }
+.btn-solid:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ── RIBBON (Word-style toolbar) ── */
+.ribbon {
+  height: 38px;
+  background: var(--ribbon);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.ribbon-sep {
+  width: 1px; height: 20px;
+  background: var(--border);
+  margin: 0 0.4rem;
+}
+
+.ribbon-btn {
+  padding: 0.25rem 0.55rem;
+  border-radius: 3px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 0.35rem;
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+.ribbon-btn:hover { background: var(--border); color: var(--text); }
+.ribbon-btn.active { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+.filter-chip {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 3px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.filter-chip:hover { border-color: var(--text); color: var(--text); }
+.filter-chip.on-data    { background: var(--red-bg);   color: var(--red);   border-color: var(--red-border); }
+.filter-chip.on-struct  { background: var(--blue-bg);  color: var(--blue);  border-color: rgba(29,111,164,0.3); }
+.filter-chip.on-grammar { background: var(--amber-bg); color: var(--amber); border-color: rgba(217,119,6,0.3); }
+.filter-chip.on-all     { background: rgba(0,0,0,0.06); color: var(--text); border-color: var(--border2); }
+
+.ribbon-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--dim);
+  margin-right: 0.25rem;
+  letter-spacing: 0.05em;
+}
+
+/* ── APP ── */
+.app { display: flex; flex-direction: column; height: 100vh; }
+.main { display: flex; flex: 1; overflow: hidden; }
+
+/* ── SCANNING SCREEN ── */
+.scanning-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+
+.scan-card {
+  width: 480px;
+  background: var(--canvas);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.scan-card-header {
+  background: var(--red);
+  padding: 1.25rem 1.5rem;
+}
+.scan-card-title {
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.2rem;
+}
+.scan-card-sub { font-size: 0.8rem; color: rgba(255,255,255,0.75); }
+
+.scan-body { padding: 1.5rem; }
+
+.scan-checks { display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.4rem; }
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  opacity: 0.45;
+  transition: opacity 0.4s, border-color 0.4s, background 0.4s;
+}
+.check-item.active { opacity: 1; border-color: var(--red); background: var(--red-bg); }
+.check-item.done   { opacity: 1; border-color: var(--border2); }
+
+.check-icon {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  transition: all 0.3s;
+  border: 2px solid var(--border2);
+  color: transparent;
+}
+.check-icon.spinning {
+  border-color: var(--red);
+  border-top-color: transparent;
+  animation: spin 0.8s linear infinite;
+}
+.check-icon.done-icon {
+  background: var(--green-bg);
+  border-color: var(--green);
+  color: var(--green);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.check-label { font-size: 0.85rem; font-weight: 500; color: var(--text); }
+.check-status { font-size: 0.72rem; color: var(--dim); margin-left: auto; font-family: var(--mono); }
+
+.scan-progress-wrap { display: flex; flex-direction: column; gap: 0.4rem; }
+.scan-progress-label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.68rem; color: var(--dim); }
+.scan-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.scan-bar { height: 100%; background: var(--red); width: 0%; border-radius: 2px; transition: width 0.35s ease; }
+
+/* ── RESULTS SCREEN ── */
+.results-layout { display: flex; flex: 1; overflow: hidden; }
+
+/* Left sidebar */
+.qc-sidebar {
+  width: 220px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.sidebar-top {
+  background: var(--red);
+  padding: 1rem;
+  flex-shrink: 0;
+}
+.sidebar-top-label { font-size: 0.68rem; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem; font-family: var(--mono); letter-spacing: 0.05em; }
+.sidebar-score-row { display: flex; align-items: baseline; gap: 0.3rem; }
+.sidebar-score-n { font-size: 2rem; font-weight: 700; color: #fff; line-height: 1; font-family: var(--sans); }
+.sidebar-score-l { font-size: 0.75rem; color: rgba(255,255,255,0.7); }
+.sidebar-score-bar-wrap { height: 3px; background: rgba(255,255,255,0.25); border-radius: 2px; margin: 0.5rem 0; }
+.sidebar-score-bar { height: 100%; background: #fff; border-radius: 2px; width: 72%; }
+.sidebar-score-desc { font-size: 0.75rem; color: rgba(255,255,255,0.75); line-height: 1.5; }
+
+.sidebar-section { padding: 0.75rem 0.85rem; border-bottom: 1px solid var(--border); }
+.sidebar-section-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.itr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.3rem 0.4rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.12s;
+  margin-bottom: 0.15rem;
+}
+.itr:hover { background: var(--border); }
+.itr.active { background: var(--red-bg); }
+
+.itr-left { display: flex; align-items: center; gap: 0.5rem; }
+.itr-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.itr-label { font-size: 0.8rem; color: var(--text); }
+.itr-count {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.resolved-item {
+  display: flex; align-items: flex-start; gap: 0.4rem;
+  font-size: 0.76rem; color: var(--muted);
+  padding: 0.25rem 0;
+  line-height: 1.5;
+}
+.resolved-item::before { content: '✓'; color: var(--green); font-size: 0.7rem; margin-top: 0.1rem; flex-shrink: 0; }
+
+.sidebar-progress { padding: 0.75rem 0.85rem; margin-top: auto; border-top: 1px solid var(--border); }
+.progress-bar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 0.4rem; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: var(--green); border-radius: 2px; width: 0%; transition: width 0.4s ease; }
+.progress-text { font-family: var(--mono); font-size: 0.68rem; color: var(--dim); }
+
+/* Document canvas — Word-style */
+.doc-wrap {
+  flex: 1;
+  background: var(--bg);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1.5rem;
+  gap: 0;
+}
+
+/* Ruler */
+.ruler {
+  width: 680px;
+  height: 22px;
+  background: var(--ribbon);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 2px 2px 0 0;
+  display: flex;
+  align-items: center;
+  padding: 0 3rem;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.ruler-marks {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  gap: 0;
+  padding-bottom: 2px;
+}
+.ruler-tick {
+  flex: 1;
+  border-left: 1px solid var(--border2);
+  height: 6px;
+}
+.ruler-tick:nth-child(5n) { height: 10px; }
+
+/* Page */
+.doc-page {
+  width: 680px;
+  background: var(--canvas);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1), 0 0 0 1px var(--border);
+  padding: 3rem;
+  min-height: 600px;
+  position: relative;
+}
+
+.doc-header-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--text);
+}
+.doc-header-title {
+  font-family: var(--serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.doc-header-meta { font-size: 0.72rem; color: var(--dim); font-family: var(--mono); }
+
+.doc-section-h {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+  margin-top: 1.6rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border);
+}
+.doc-section-h:first-of-type { margin-top: 0; }
+
+.doc-para {
+  font-family: var(--serif);
+  font-size: 0.9rem;
+  line-height: 1.9;
+  color: #2A2A2A;
+  margin-bottom: 1rem;
+  text-align: justify;
+}
+
+/* Flags — inline highlights */
+.flag {
+  display: inline;
+  cursor: pointer;
+  border-radius: 1px;
+  padding: 0 1px;
+  transition: all 0.12s;
+  position: relative;
+}
+.flag-data    { background: rgba(255,77,79,0.15);   border-bottom: 2px solid var(--red);   color: #B52020; }
+.flag-grammar { background: rgba(217,119,6,0.12);   border-bottom: 2px solid var(--amber); color: #92590A; }
+.flag-struct  { background: rgba(29,111,164,0.1);   border-bottom: 2px solid var(--blue);  color: #12507A; }
+
+.flag:hover { filter: brightness(0.9); }
+.flag.active-flag { outline: 2px solid; outline-offset: 2px; border-radius: 2px; }
+.flag-data.active-flag    { outline-color: var(--red); }
+.flag-grammar.active-flag { outline-color: var(--amber); }
+.flag-struct.active-flag  { outline-color: var(--blue); }
+
+/* Inline flag number badge */
+.flag-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  font-weight: 500;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  margin-left: 2px;
+  position: relative;
+  top: -2px;
+  cursor: pointer;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.fn-data    { background: var(--red);   color: #fff; }
+.fn-grammar { background: var(--amber); color: #fff; }
+.fn-struct  { background: var(--blue);  color: #fff; }
+
+.doc-footer-line {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.7rem;
+  color: var(--dim);
+  font-family: var(--mono);
+}
+
+.page-num-wrap {
+  width: 680px;
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 0;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--dim);
+}
+
+/* ── SOURCE PANEL ── */
+.source-panel {
+  width: 0;
+  overflow: hidden;
+  background: var(--canvas);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.28s cubic-bezier(0.4,0,0.2,1);
+  flex-shrink: 0;
+  box-shadow: none;
+}
+.source-panel.open {
+  width: 360px;
+  box-shadow: -4px 0 16px rgba(0,0,0,0.06);
+}
+
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.7rem 0.9rem;
+  background: var(--ribbon);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.panel-title { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+.panel-close {
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 3px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.9rem;
+  background: transparent;
+  border: none;
+  transition: all 0.12s;
+}
+.panel-close:hover { background: var(--border); color: var(--text); }
+
+.panel-issue-card {
+  margin: 0.75rem;
+  padding: 0.85rem;
+  border-radius: 5px;
+  border-left: 3px solid;
+  flex-shrink: 0;
+}
+.panel-issue-card.data-card    { background: var(--red-bg);   border-left-color: var(--red);   border: 1px solid var(--red-border); border-left: 3px solid var(--red); }
+.panel-issue-card.grammar-card { background: var(--amber-bg); border-left-color: var(--amber); border: 1px solid rgba(217,119,6,0.3); border-left: 3px solid var(--amber); }
+.panel-issue-card.struct-card  { background: var(--blue-bg);  border-left-color: var(--blue);  border: 1px solid rgba(29,111,164,0.3); border-left: 3px solid var(--blue); }
+
+.pic-type {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+.data-card .pic-type    { color: var(--red); }
+.grammar-card .pic-type { color: var(--amber); }
+.struct-card .pic-type  { color: var(--blue); }
+
+.pic-title { font-size: 0.84rem; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; line-height: 1.4; }
+.pic-desc  { font-size: 0.76rem; color: var(--muted); line-height: 1.6; }
+
+/* PDF Viewer */
+.pdf-viewer {
+  flex: 1;
+  margin: 0 0.75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.pdf-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.45rem 0.75rem;
+  background: var(--ribbon);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.pdf-filename { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); }
+.pdf-page     { font-family: var(--mono); font-size: 0.65rem; color: var(--dim); }
+
+.pdf-doc {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  background: var(--canvas);
+}
+
+.pdf-text {
+  font-family: var(--serif);
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.pdf-highlight {
+  background: rgba(255,220,0,0.4);
+  border-bottom: 2px solid #E6A800;
+  border-radius: 1px;
+  color: var(--text);
+  animation: hl-pulse 2.5s ease-in-out infinite;
+}
+@keyframes hl-pulse {
+  0%, 100% { background: rgba(255,220,0,0.4); }
+  50%       { background: rgba(255,220,0,0.65); }
+}
+
+/* Actions */
+.panel-actions {
+  padding: 0.75rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex-shrink: 0;
+  background: var(--surface);
+}
+.action-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.action-btn {
+  width: 100%;
+  padding: 0.5rem 0.8rem;
+  border-radius: 4px;
+  border: 1px solid;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  display: flex; align-items: center; gap: 0.5rem;
+  transition: all 0.12s;
+  background: transparent;
+}
+.ab-accept  { border-color: rgba(26,127,75,0.4); color: var(--green); }
+.ab-accept:hover:not(:disabled)  { background: var(--green-bg); }
+.ab-tracked { border-color: rgba(29,111,164,0.4); color: var(--blue); }
+.ab-tracked:hover:not(:disabled) { background: var(--blue-bg); }
+.ab-comment { border-color: var(--border2); color: var(--muted); }
+.ab-comment:hover:not(:disabled) { background: var(--border); color: var(--text); }
+.action-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.comment-input {
+  width: 100%;
+  background: var(--canvas);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 0.8rem;
+  padding: 0.45rem 0.65rem;
+  resize: none;
+  outline: none;
+  display: none;
+  transition: border-color 0.15s;
+  line-height: 1.6;
+}
+.comment-input:focus { border-color: var(--red); }
+.comment-input.visible { display: block; }
+.btn-submit-comment {
+  display: none;
+  width: 100%;
+  padding: 0.45rem;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.btn-submit-comment:hover { background: #e83032; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 1.5rem; left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  background: var(--canvas);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 5px;
+  padding: 0.65rem 1.1rem;
+  font-size: 0.82rem;
+  color: var(--text);
+  display: flex; align-items: center; gap: 0.6rem;
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+  z-index: 999;
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── INTRO ── */
+.intro-overlay {
+  position: fixed; inset: 0;
+  background: rgba(243,243,243,0.95);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.intro-card {
+  background: var(--canvas);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  max-width: 460px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.intro-header {
+  background: var(--red);
+  padding: 1.8rem 2rem;
+  text-align: center;
+}
+.intro-logo { font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.8); margin-bottom: 0.5rem; letter-spacing: 0.06em; text-transform: uppercase; font-family: var(--mono); }
+.intro-title { font-family: var(--sans); font-size: 1.5rem; font-weight: 700; color: #fff; line-height: 1.2; }
+
+.intro-body { padding: 1.8rem 2rem; }
+.intro-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.75; margin-bottom: 1.5rem; }
+
+.intro-steps {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.8rem;
+}
+.intro-step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.85rem 0.75rem;
+  text-align: center;
+}
+.is-n {
+  width: 22px; height: 22px;
+  background: var(--red);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 0.5rem;
+}
+.is-l { font-size: 0.76rem; color: var(--text); line-height: 1.45; font-weight: 500; }
+
+.intro-cta {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.intro-cta:hover { background: #e83032; }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div class="intro-overlay" id="intro">
+  <div class="intro-card">
+    <div class="intro-header">
+      <div class="intro-logo">MedWrite AI · Quality Control Module</div>
+      <div class="intro-title">AI-Powered Document QC</div>
+    </div>
+    <div class="intro-body">
+      <p class="intro-desc">This prototype demonstrates the AI Quality Control feature built for a pharma-grade medical writing platform. Walk through the full QC flow for a Clinical Study Report.</p>
+      <div class="intro-steps">
+        <div class="intro-step">
+          <div class="is-n">1</div>
+          <div class="is-l">AI scans the document</div>
+        </div>
+        <div class="intro-step">
+          <div class="is-n">2</div>
+          <div class="is-l">Click a highlighted issue</div>
+        </div>
+        <div class="intro-step">
+          <div class="is-n">3</div>
+          <div class="is-l">Review source & resolve</div>
+        </div>
+      </div>
+      <button class="intro-cta" onclick="startScan()">Start QC Scan →</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-icon">M</div>
+      MedWrite AI
+    </div>
+    <div class="topbar-center">CSR_Phase1_Study_A14_v2.docx</div>
+    <div class="topbar-right">
+      <span class="badge badge-scan" id="badge-scan">● Scanning</span>
+      <span class="badge badge-done" id="badge-done">✓ QC Complete</span>
+      <button class="btn btn-white">Export report</button>
+      <button class="btn btn-solid" id="btn-signoff" disabled onclick="showToast('✓','Document signed off — ready for submission.')">Sign off</button>
+    </div>
+  </div>
+
+  <!-- RIBBON -->
+  <div class="ribbon" id="ribbon" style="display:none;">
+    <span class="ribbon-label">Filter:</span>
+    <button class="filter-chip on-all" onclick="doFilter(this,'all')">All issues</button>
+    <button class="filter-chip" onclick="doFilter(this,'data')">● Data errors</button>
+    <button class="filter-chip" onclick="doFilter(this,'struct')">● Structure</button>
+    <button class="filter-chip" onclick="doFilter(this,'grammar')">● Grammar</button>
+    <div class="ribbon-sep"></div>
+    <button class="ribbon-btn" onclick="showToast('↓','Downloading QC report as PDF…')">↓ Download report</button>
+    <button class="ribbon-btn" onclick="showToast('⎘','Summary copied to clipboard.')">⎘ Copy summary</button>
+  </div>
+
+  <div class="main">
+
+    <!-- SCANNING -->
+    <div id="screen-scan" style="flex:1;display:flex;">
+      <div class="scanning-wrap">
+        <div class="scan-card">
+          <div class="scan-card-header">
+            <div class="scan-card-title">Running Quality Check</div>
+            <div class="scan-card-sub">Analysing against 3 source files — Statistical output, Protocol v4, ICH E3 template</div>
+          </div>
+          <div class="scan-body">
+            <div class="scan-checks">
+              <div class="check-item" id="ci0"><div class="check-icon" id="ic0"></div><div class="check-label">Data correctness</div><div class="check-status" id="cs0">Waiting…</div></div>
+              <div class="check-item" id="ci1"><div class="check-icon" id="ic1"></div><div class="check-label">Template & structure adherence</div><div class="check-status" id="cs1">Waiting…</div></div>
+              <div class="check-item" id="ci2"><div class="check-icon" id="ic2"></div><div class="check-label">Grammar & regulatory language</div><div class="check-status" id="cs2">Waiting…</div></div>
+              <div class="check-item" id="ci3"><div class="check-icon" id="ic3"></div><div class="check-label">Cross-reference integrity</div><div class="check-status" id="cs3">Waiting…</div></div>
+            </div>
+            <div class="scan-progress-wrap">
+              <div class="scan-progress-label"><span id="scan-label-text">Initialising…</span><span id="scan-pct">0%</span></div>
+              <div class="scan-track"><div class="scan-bar" id="scan-bar"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="screen-results" style="display:none;flex:1;overflow:hidden;">
+      <div class="results-layout">
+
+        <!-- Sidebar -->
+        <div class="qc-sidebar">
+          <div class="sidebar-top">
+            <div class="sidebar-top-label">QC Score</div>
+            <div class="sidebar-score-row">
+              <div class="sidebar-score-n">72</div>
+              <div class="sidebar-score-l">/ 100</div>
+            </div>
+            <div class="sidebar-score-bar-wrap"><div class="sidebar-score-bar"></div></div>
+            <div class="sidebar-score-desc">7 issues found. Resolve before submission.</div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-section-label">By type</div>
+            <div class="itr active" onclick="sidebarFilter(this,'all')">
+              <div class="itr-left"><div class="itr-dot" style="background:var(--dim)"></div><div class="itr-label">All issues</div></div>
+              <div class="itr-count" style="background:rgba(0,0,0,0.06);color:var(--muted);">7</div>
+            </div>
+            <div class="itr" onclick="sidebarFilter(this,'data')">
+              <div class="itr-left"><div class="itr-dot" style="background:var(--red)"></div><div class="itr-label">Data errors</div></div>
+              <div class="itr-count" style="background:var(--red-bg);color:var(--red);">3</div>
+            </div>
+            <div class="itr" onclick="sidebarFilter(this,'struct')">
+              <div class="itr-left"><div class="itr-dot" style="background:var(--blue)"></div><div class="itr-label">Structure</div></div>
+              <div class="itr-count" style="background:var(--blue-bg);color:var(--blue);">2</div>
+            </div>
+            <div class="itr" onclick="sidebarFilter(this,'grammar')">
+              <div class="itr-left"><div class="itr-dot" style="background:var(--amber)"></div><div class="itr-label">Grammar</div></div>
+              <div class="itr-count" style="background:var(--amber-bg);color:var(--amber);">2</div>
+            </div>
+          </div>
+
+          <div class="sidebar-section" id="resolved-section" style="display:none;">
+            <div class="sidebar-section-label">Resolved</div>
+            <div id="resolved-list"></div>
+          </div>
+
+          <div class="sidebar-progress">
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
+            <div class="progress-text" id="progress-text">0 of 7 resolved</div>
+          </div>
+        </div>
+
+        <!-- Document -->
+        <div class="doc-wrap" id="doc-wrap">
+          <div class="ruler">
+            <div class="ruler-marks">
+              <div class="ruler-tick"></div><div class="ruler-tick"></div><div class="ruler-tick"></div><div class="ruler-tick"></div><div class="ruler-tick"></div>
+              <div class="ruler-tick"></div><div class="ruler-tick"></div><div class="ruler-tick"></div><div class="ruler-tick"></div><div class="ruler-tick"></div>
+              <div class="ruler-tick"></div><div class="ruler-tick"></div><div class="ruler-tick"></div><div class="ruler-tick"></div><div class="ruler-tick"></div>
+              <div class="ruler-tick"></div><div class="ruler-tick"></div><div class="ruler-tick"></div><div class="ruler-tick"></div><div class="ruler-tick"></div>
+            </div>
+          </div>
+          <div class="doc-page">
+            <div class="doc-header-line">
+              <div class="doc-header-title">Clinical Study Report — Phase 1 &nbsp;|&nbsp; Study A14</div>
+              <div class="doc-header-meta">ICH E3 · Confidential · v2.0 Draft</div>
+            </div>
+
+            <div class="doc-section-h">12.4 &nbsp; Pharmacokinetic Results</div>
+
+            <p class="doc-para">
+              The mean maximum plasma concentration (C<sub>max</sub>) was observed at
+              <span class="flag flag-data" data-id="f1" onclick="openFlag('f1')">482.3 ng/mL</span><span class="flag-num fn-data" data-id="f1" onclick="openFlag('f1')">D1</span>
+              following a single oral dose of 200 mg in healthy adult volunteers (n=30). The time to reach peak concentration (T<sub>max</sub>) was
+              <span class="flag flag-grammar" data-id="f2" onclick="openFlag('f2')">at approximately 2.4 hours post-dosing that was administered in the morning</span><span class="flag-num fn-grammar" data-id="f2" onclick="openFlag('f2')">G1</span>.
+            </p>
+
+            <p class="doc-para">
+              The area under the plasma concentration–time curve from zero to 24 hours (AUC<sub>0–24</sub>) was
+              <span class="flag flag-data" data-id="f3" onclick="openFlag('f3')">3,847 ng·h/mL</span><span class="flag-num fn-data" data-id="f3" onclick="openFlag('f3')">D2</span>.
+              Inter-subject variability was
+              <span class="flag flag-data" data-id="f4" onclick="openFlag('f4')">28.4% CV</span><span class="flag-num fn-data" data-id="f4" onclick="openFlag('f4')">D3</span>,
+              which is within acceptable range for this compound class.
+            </p>
+
+            <p class="doc-para">
+              The apparent terminal half-life (t<sub>½</sub>) was 14.2 hours, consistent with once-daily dosing. The apparent volume of distribution (Vd/F) was 198 L. Renal clearance accounted for approximately 34% of total clearance.
+            </p>
+
+            <div class="doc-section-h">12.5 &nbsp; Adverse Events Summary</div>
+
+            <p class="doc-para">
+              <span class="flag flag-struct" data-id="f5" onclick="openFlag('f5')">Table 12.5.1 summarising treatment-emergent adverse events (TEAEs) by system organ class should appear here as per ICH E3 guidelines Section 12.3.2.</span><span class="flag-num fn-struct" data-id="f5" onclick="openFlag('f5')">S1</span>
+            </p>
+
+            <p class="doc-para">
+              A total of 24 subjects (80%) experienced at least one TEAE. The most frequent TEAEs were headache (36.7%), nausea (26.7%), and fatigue (20.0%).
+              <span class="flag flag-grammar" data-id="f6" onclick="openFlag('f6')">No subject have discontinued the study due to adverse events.</span><span class="flag-num fn-grammar" data-id="f6" onclick="openFlag('f6')">G2</span>
+            </p>
+
+            <p class="doc-para">
+              Three serious adverse events (SAEs) were reported: elevated liver enzymes (Grade 2), severe headache requiring hospitalisation, and syncope. All were assessed as unlikely related to study drug.
+              <span class="flag flag-struct" data-id="f7" onclick="openFlag('f7')">Individual narratives for SAEs are referenced in Appendix 16.1.3, which is not present in the current document version.</span><span class="flag-num fn-struct" data-id="f7" onclick="openFlag('f7')">S2</span>
+            </p>
+
+            <p class="doc-para" style="color:var(--dim);">
+              The safety profile is consistent with the known pharmacology of the compound. No unexpected signals were identified. The Data Safety Monitoring Board reviewed interim data at week 4 and recommended continuation without modification.
+            </p>
+
+            <div class="doc-footer-line">
+              <span>CONFIDENTIAL — For regulatory purposes only</span>
+              <span>Page 12 of 48</span>
+            </div>
+          </div>
+          <div class="page-num-wrap">Page 12 of 48</div>
+        </div>
+
+        <!-- Source panel -->
+        <div class="source-panel" id="source-panel">
+          <div class="panel-header">
+            <div class="panel-title" id="panel-title">Source reference</div>
+            <button class="panel-close" onclick="closePanel()">✕</button>
+          </div>
+
+          <div class="panel-issue-card" id="panel-issue-card">
+            <div class="pic-type" id="pic-type">—</div>
+            <div class="pic-title" id="pic-title">—</div>
+            <div class="pic-desc" id="pic-desc">—</div>
+          </div>
+
+          <div class="pdf-viewer">
+            <div class="pdf-bar">
+              <div class="pdf-filename" id="pdf-filename">—</div>
+              <div class="pdf-page" id="pdf-page">—</div>
+            </div>
+            <div class="pdf-doc">
+              <div class="pdf-text" id="pdf-content">—</div>
+            </div>
+          </div>
+
+          <div class="panel-actions">
+            <div class="action-label">Resolve this issue</div>
+            <button class="action-btn ab-accept"  id="ab-accept"  onclick="resolve('accept')">✓ &nbsp;Accept suggested change</button>
+            <button class="action-btn ab-tracked" id="ab-tracked" onclick="resolve('tracked')">⊕ &nbsp;Accept with tracked change</button>
+            <button class="action-btn ab-comment" id="ab-comment" onclick="toggleComment()">✎ &nbsp;Add comment</button>
+            <textarea class="comment-input" id="comment-input" rows="2" placeholder="Type your comment…"></textarea>
+            <button class="btn-submit-comment" id="btn-submit-comment" onclick="resolve('comment')">Submit comment</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toast-icon">✓</span>
+  <span id="toast-msg">Done.</span>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────────
+const FLAGS = {
+  f1: { type:'data', typeLabel:'Data Error', cardClass:'data-card',
+    title:'Incorrect Cmax value',
+    desc:'Document states 482.3 ng/mL. Statistical output Table PK-3 reports 412.8 ng/mL — possible row transcription error during drafting.',
+    file:'PK_Statistical_Output_A14.pdf', page:'p. 34',
+    pdf:`<b>Table PK-3 — Primary PK Parameters</b><br><br>
+      Parameter &emsp; Unit &emsp;&emsp; n &emsp; Mean &emsp; SD &emsp; CV%<br>
+      <hr style="border:none;border-top:1px solid #ddd;margin:0.5rem 0">
+      C<sub>max</sub> &emsp;&emsp;&emsp;&emsp; ng/mL &emsp; 30 &emsp; <span class="pdf-highlight">412.8</span> &emsp; 117.2 &emsp; 28.4<br>
+      T<sub>max</sub> &emsp;&emsp;&emsp;&emsp; h &emsp;&emsp;&emsp; 30 &emsp; 2.4 &emsp;&emsp; 0.81 &emsp;&emsp; 33.8<br>
+      AUC<sub>0-24</sub> &emsp;&emsp; ng·h/mL &emsp; 30 &emsp; 3,847 &emsp; 891 &emsp;&emsp; 23.2<br>
+      t<sub>½</sub> &emsp;&emsp;&emsp;&emsp;&emsp; h &emsp;&emsp;&emsp; 30 &emsp; 14.2 &emsp;&emsp; 2.14 &emsp;&emsp; 15.1<br><br>
+      <i>All values: arithmetic mean ± SD.</i>`,
+    suggest:'412.8 ng/mL' },
+
+  f2: { type:'grammar', typeLabel:'Grammar / Style Issue', cardClass:'grammar-card',
+    title:'Awkward phrasing — ICH E3 style',
+    desc:'The clause "at approximately 2.4 hours post-dosing that was administered in the morning" is redundant and non-standard for regulatory reporting.',
+    file:'ICH_E3_Style_Guide.pdf', page:'p. 8',
+    pdf:`<b>ICH E3 — Section 11.4: Language Requirements</b><br><br>
+      Pharmacokinetic parameters should be reported using concise, unambiguous language. Redundant clauses must be avoided.<br><br>
+      <b>Preferred:</b><br><span class="pdf-highlight">"T<sub>max</sub> was approximately 2.4 hours post-dose."</span><br><br>
+      <b>Not preferred:</b> "at approximately 2.4 hours post-dosing that was administered in the morning"<br><br>
+      <i>The timing of administration is a study design element (Section 9), not a PK finding.</i>`,
+    suggest:'approximately 2.4 hours post-dose' },
+
+  f3: { type:'data', typeLabel:'Data — Unit Confirmation', cardClass:'data-card',
+    title:'AUC₀₋₂₄ — unit confirmation required',
+    desc:'Numerical value matches source (3,847). However, document and source use the same unit notation — confirm ng·h/mL vs ng×h/mL are treated equivalently in the submission.',
+    file:'PK_Statistical_Output_A14.pdf', page:'p. 34',
+    pdf:`<b>Table PK-3</b><br><br>
+      AUC<sub>0-24</sub> &emsp; <span class="pdf-highlight">ng·h/mL</span> &emsp; 30 &emsp; 3,847<br><br>
+      <i>Note: Confirm unit notation is consistent across all sections and appendices. No numerical discrepancy — flag is for notation review only.</i>`,
+    suggest:'Confirm unit notation consistency — no numerical change required' },
+
+  f4: { type:'data', typeLabel:'Data Error', cardClass:'data-card',
+    title:'CV% figure incorrect for AUC₀₋₂₄',
+    desc:'Document states 28.4% CV for AUC₀₋₂₄. Source Table PK-3 lists 23.2% CV for AUC₀₋₂₄. The 28.4% value belongs to Cmax — likely a copy error from the row above.',
+    file:'PK_Statistical_Output_A14.pdf', page:'p. 34',
+    pdf:`<b>Table PK-3 — CV% values</b><br><br>
+      C<sub>max</sub> &emsp;&emsp;&emsp; CV% = 28.4 &emsp; ← document incorrectly uses this<br>
+      AUC<sub>0-24</sub> &emsp; CV% = <span class="pdf-highlight">23.2</span> &emsp; ← correct value<br>
+      t<sub>½</sub> &emsp;&emsp;&emsp;&emsp; CV% = 15.1<br><br>
+      <i>Row reference error during drafting. The 28.4% figure belongs to Cmax, not AUC.</i>`,
+    suggest:'23.2% CV' },
+
+  f5: { type:'struct', typeLabel:'Structure Issue', cardClass:'struct-card',
+    title:'Missing Table 12.5.1 — TEAEs by SOC',
+    desc:'ICH E3 Section 12.3.2 mandates a TEAE summary table by System Organ Class at this location. The table is referenced but not present in this document version.',
+    file:'ICH_E3_Template_Guidelines.pdf', page:'p. 22',
+    pdf:`<b>ICH E3 — Section 12.3.2: Required Tabulations</b><br><br>
+      The following tables are required before the narrative AE section:<br><br>
+      <span class="pdf-highlight">☐ Table: TEAEs by System Organ Class and Preferred Term</span><br>
+      ☐ Table: TEAEs by severity grade<br>
+      ☐ Table: TEAEs by relationship to study drug<br><br>
+      <i>Missing tables constitute a formal deficiency and will be flagged in regulatory review.</i>`,
+    suggest:'Insert Table 12.5.1 before this paragraph' },
+
+  f6: { type:'grammar', typeLabel:'Grammar Error', cardClass:'grammar-card',
+    title:'Subject–verb agreement error',
+    desc:'"No subject have discontinued" is grammatically incorrect. Should be "No subjects discontinued" or "No subject discontinued".',
+    file:'ICH_E3_Style_Guide.pdf', page:'p. 5',
+    pdf:`<b>ICH E3 — Grammar Standards</b><br><br>
+      Common errors flagged in QC review:<br><br>
+      ✗ &nbsp;"No subject <u>have</u> discontinued…"<br>
+      <span class="pdf-highlight">✓ &nbsp;"No subjects discontinued…"</span><br>
+      ✓ &nbsp;"No subject discontinued…"<br><br>
+      <i>Subject–verb agreement must be consistent. Both singular and plural constructions are acceptable if internally consistent.</i>`,
+    suggest:'No subjects discontinued the study due to adverse events.' },
+
+  f7: { type:'struct', typeLabel:'Cross-Reference Issue', cardClass:'struct-card',
+    title:'Missing Appendix 16.1.3',
+    desc:'Document references Appendix 16.1.3 for individual SAE narratives, but the appendix is not present in this version. Cross-reference integrity failure.',
+    file:'ICH_E3_Template_Guidelines.pdf', page:'p. 41',
+    pdf:`<b>ICH E3 — Appendix Requirements</b><br><br>
+      All appendices referenced in the CSR body must be present and complete before submission.<br><br>
+      <span class="pdf-highlight">Appendix 16.1.3: Individual Patient Listings for SAEs</span><br>
+      Required: one narrative per SAE including onset, description, severity, action, outcome, and causality assessment.<br><br>
+      <i>Unresolved cross-references are a common cause of regulatory queries. Ensure all references resolve.</i>`,
+    suggest:'Compile and attach Appendix 16.1.3 before sign-off' }
+};
+
+let activeFlag = null;
+let resolved = {};
+let resolvedCount = 0;
+const TOTAL = 7;
+
+// ── SCAN ─────────────────────────────────────────────────────────────────────
+function startScan() {
+  document.getElementById('intro').style.display = 'none';
+  const steps = [
+    { i:0, label:'Checking data values against source files…', done:'3 errors found', pct:25 },
+    { i:1, label:'Checking template & structural requirements…', done:'2 issues found', pct:55 },
+    { i:2, label:'Checking grammar & regulatory language…', done:'2 issues found', pct:80 },
+    { i:3, label:'Verifying cross-references & appendices…', done:'Complete', pct:100 },
+  ];
+  const bar = document.getElementById('scan-bar');
+  const lbl = document.getElementById('scan-label-text');
+  const pct = document.getElementById('scan-pct');
+
+  steps.forEach(({ i, label, done, pct:p }, idx) => {
+    const delay = idx * 1600;
+    setTimeout(() => {
+      const ci = document.getElementById(`ci${i}`);
+      const ic = document.getElementById(`ic${i}`);
+      const cs = document.getElementById(`cs${i}`);
+      ci.classList.add('active');
+      ic.className = 'check-icon spinning';
+      cs.textContent = label;
+      lbl.textContent = label;
+      bar.style.width = (p * 0.85) + '%';
+      pct.textContent = Math.round(p * 0.85) + '%';
+    }, delay);
+
+    setTimeout(() => {
+      const ci = document.getElementById(`ci${i}`);
+      const ic = document.getElementById(`ic${i}`);
+      const cs = document.getElementById(`cs${i}`);
+      ci.classList.remove('active');
+      ci.classList.add('done');
+      ic.className = 'check-icon done-icon';
+      ic.textContent = '✓';
+      cs.textContent = done;
+      if (i === 3) {
+        bar.style.width = '100%';
+        pct.textContent = '100%';
+        lbl.textContent = 'Scan complete.';
+        setTimeout(showResults, 700);
+      }
+    }, delay + 1200);
+  });
+}
+
+function showResults() {
+  document.getElementById('screen-scan').style.display = 'none';
+  document.getElementById('screen-results').style.display = 'flex';
+  document.getElementById('ribbon').style.display = 'flex';
+  document.getElementById('badge-scan').style.display = 'none';
+  document.getElementById('badge-done').style.display = 'inline-flex';
+}
+
+// ── FLAGS ────────────────────────────────────────────────────────────────────
+function openFlag(id) {
+  if (resolved[id]) return;
+  activeFlag = id;
+  const f = FLAGS[id];
+
+  document.querySelectorAll('.flag,.flag-num').forEach(el => el.classList.remove('active-flag'));
+  document.querySelectorAll(`[data-id="${id}"]`).forEach(el => el.classList.add('active-flag'));
+
+  const card = document.getElementById('panel-issue-card');
+  card.className = `panel-issue-card ${f.cardClass}`;
+  document.getElementById('pic-type').textContent = f.typeLabel;
+  document.getElementById('pic-title').textContent = f.title;
+  document.getElementById('pic-desc').textContent = f.desc;
+  document.getElementById('pdf-filename').textContent = f.file;
+  document.getElementById('pdf-page').textContent = f.page;
+  document.getElementById('pdf-content').innerHTML = f.pdf;
+
+  ['ab-accept','ab-tracked','ab-comment'].forEach(id => {
+    document.getElementById(id).disabled = false;
+  });
+  document.getElementById('comment-input').classList.remove('visible');
+  document.getElementById('comment-input').value = '';
+  document.getElementById('btn-submit-comment').style.display = 'none';
+
+  document.getElementById('source-panel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('source-panel').classList.remove('open');
+  document.querySelectorAll('.flag,.flag-num').forEach(el => el.classList.remove('active-flag'));
+  activeFlag = null;
+}
+
+function resolve(action) {
+  if (!activeFlag) return;
+  const id = activeFlag;
+  const f = FLAGS[id];
+  const msgs = { accept:`✓ "${f.suggest}" applied`, tracked:'⊕ Accepted with tracked change', comment:'✎ Comment saved' };
+
+  document.querySelectorAll(`[data-id="${id}"]`).forEach(el => {
+    el.style.opacity = '0.28';
+    el.style.textDecoration = 'line-through';
+    el.style.pointerEvents = 'none';
+    el.style.cursor = 'default';
+  });
+
+  resolved[id] = f.title;
+  resolvedCount++;
+  updateSidebar();
+  closePanel();
+  showToast('✓', msgs[action]);
+  if (resolvedCount === TOTAL) document.getElementById('btn-signoff').disabled = false;
+}
+
+function updateSidebar() {
+  const section = document.getElementById('resolved-section');
+  const list = document.getElementById('resolved-list');
+  section.style.display = 'block';
+  list.innerHTML = Object.values(resolved).map(t =>
+    `<div class="resolved-item">${t}</div>`
+  ).join('');
+  const pct = (resolvedCount / TOTAL) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `${resolvedCount} of ${TOTAL} resolved`;
+}
+
+function toggleComment() {
+  const inp = document.getElementById('comment-input');
+  const btn = document.getElementById('btn-submit-comment');
+  inp.classList.toggle('visible');
+  btn.style.display = inp.classList.contains('visible') ? 'block' : 'none';
+  if (inp.classList.contains('visible')) inp.focus();
+}
+
+// ── FILTER ───────────────────────────────────────────────────────────────────
+function doFilter(el, type) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.className = 'filter-chip');
+  el.classList.add('on-' + type);
+  applyFilter(type);
+}
+function sidebarFilter(el, type) {
+  document.querySelectorAll('.itr').forEach(r => r.classList.remove('active'));
+  el.classList.add('active');
+  applyFilter(type);
+  const chip = [...document.querySelectorAll('.filter-chip')].find(c => c.textContent.toLowerCase().includes(type === 'all' ? 'all' : type));
+  if (chip) doFilter(chip, type);
+}
+function applyFilter(type) {
+  document.querySelectorAll('.flag,.flag-num').forEach(el => {
+    if (resolved[el.dataset.id]) return;
+    const t = el.classList.contains('flag-data') || el.classList.contains('fn-data') ? 'data'
+            : el.classList.contains('flag-struct') || el.classList.contains('fn-struct') ? 'struct'
+            : 'grammar';
+    el.style.visibility = (type === 'all' || t === type) ? '' : 'hidden';
+  });
+}
+
+// ── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(icon, msg) {
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-msg').textContent = msg;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
