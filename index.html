@@ -586,16 +586,17 @@
     position: fixed;
     inset: 0;
     z-index: 600;
-    background: rgba(8,10,16,0.88);
+    background: rgba(8,10,16,0.9);
     backdrop-filter: blur(8px);
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 1.5rem;
   }
   .viewer-modal.open { display: flex; }
 
   .viewer-wrap {
-    width: min(92vw, calc(88vh * 16 / 9));
+    width: min(94vw, calc(90vh * 1.35));
+    height: min(90vh, calc(94vw / 1.35));
     display: flex;
     flex-direction: column;
     background: #16191F;
@@ -606,18 +607,20 @@
   }
   @keyframes viewerIn {
     from { opacity:0; transform:scale(0.97) translateY(10px); }
-    to   { opacity:1; transform:scale(1)    translateY(0); }
+    to   { opacity:1; transform:scale(1) translateY(0); }
   }
 
+  /* Top bar */
   .viewer-topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1.1rem;
+    padding: 0 1rem;
     height: 44px;
     background: #0F1117;
     border-bottom: 1px solid #1E2535;
     flex-shrink: 0;
+    gap: 1rem;
   }
   .viewer-title {
     font-family: 'DM Mono', monospace;
@@ -626,34 +629,46 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 60%;
+    flex: 1;
   }
-  .viewer-controls {
+  .viewer-topbar-right {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    flex-shrink: 0;
   }
-  .viewer-nav {
-    width: 28px; height: 28px;
+
+  /* Zoom controls */
+  .zoom-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: #1A1D24;
+    border: 1px solid #1E2535;
+    border-radius: 5px;
+    padding: 0.15rem 0.4rem;
+  }
+  .zoom-btn {
+    width: 22px; height: 22px;
     display: flex; align-items: center; justify-content: center;
     background: transparent;
-    border: 1px solid #1E2535;
-    border-radius: 4px;
+    border: none;
     color: #8899BB;
-    font-size: 0.85rem;
+    font-size: 1rem;
     cursor: pointer;
+    border-radius: 3px;
     transition: all 0.12s;
+    line-height: 1;
   }
-  .viewer-nav:hover:not(:disabled) { background: #1E2535; color: #E8EDF8; }
-  .viewer-nav:disabled { opacity: 0.3; cursor: not-allowed; }
-
-  .viewer-page-info {
+  .zoom-btn:hover { background: #252A35; color: #E8EDF8; }
+  .zoom-level {
     font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     color: #556688;
-    padding: 0 0.4rem;
-    white-space: nowrap;
+    min-width: 32px;
+    text-align: center;
   }
+
   .viewer-close {
     display: flex; align-items: center; gap: 0.35rem;
     padding: 0.28rem 0.75rem;
@@ -665,39 +680,88 @@
     font-size: 0.75rem;
     cursor: pointer;
     transition: all 0.12s;
-    margin-left: 0.5rem;
   }
   .viewer-close:hover { border-color: #445070; color: #E8EDF8; }
 
-  /* Canvas area */
+  /* Body — sidebar + stage */
+  .viewer-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* Thumbnail sidebar */
+  .viewer-sidebar {
+    width: 110px;
+    background: #0D1018;
+    border-right: 1px solid #1E2535;
+    overflow-y: auto;
+    flex-shrink: 0;
+    padding: 0.6rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .viewer-sidebar::-webkit-scrollbar { width: 3px; }
+  .viewer-sidebar::-webkit-scrollbar-thumb { background: #1E2535; border-radius: 2px; }
+
+  .thumb-item {
+    cursor: pointer;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: border-color 0.15s, transform 0.12s;
+    position: relative;
+    background: #1A1D24;
+    flex-shrink: 0;
+  }
+  .thumb-item:hover { border-color: #334466; transform: scale(1.02); }
+  .thumb-item.active { border-color: #0D7C6E; }
+
+  .thumb-canvas {
+    width: 100%;
+    display: block;
+  }
+  .thumb-num {
+    position: absolute;
+    bottom: 2px; right: 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    color: rgba(255,255,255,0.4);
+    line-height: 1;
+  }
+  .thumb-item.active .thumb-num { color: #0D7C6E; }
+
+  /* Main stage */
   .viewer-stage {
     flex: 1;
     background: #1A1D24;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow: auto;
     position: relative;
-    aspect-ratio: 16/9;
+    min-width: 0;
   }
+  .viewer-stage::-webkit-scrollbar { width: 5px; height: 5px; }
+  .viewer-stage::-webkit-scrollbar-thumb { background: #1E2535; border-radius: 3px; }
 
-  /* PDF mode — scrollable single page */
   .viewer-canvas-wrap {
-    width: 100%;
-    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    padding: 1rem;
+    min-width: min-content;
   }
   #viewer-canvas {
-    max-width: 100%;
-    max-height: 100%;
     display: block;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+    border-radius: 2px;
+    transition: box-shadow 0.2s;
   }
 
-  /* Loading spinner */
+  /* Loading */
   .viewer-loading {
     position: absolute;
     inset: 0;
@@ -711,9 +775,9 @@
     font-size: 0.78rem;
   }
   .viewer-spinner {
-    width: 32px; height: 32px;
+    width: 28px; height: 28px;
     border: 2px solid #1E2535;
-    border-top-color: var(--teal);
+    border-top-color: #0D7C6E;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
@@ -721,18 +785,52 @@
 
   /* Bottom bar */
   .viewer-bottombar {
-    height: 36px;
+    height: 40px;
     background: #0F1117;
     border-top: 1px solid #1E2535;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1.1rem;
+    padding: 0 1rem;
     flex-shrink: 0;
+    gap: 1rem;
   }
+
+  /* Nav group — big arrows in bottom bar */
+  .nav-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .nav-btn {
+    display: flex; align-items: center; gap: 0.4rem;
+    padding: 0.32rem 0.75rem;
+    background: #1A1D24;
+    border: 1px solid #1E2535;
+    border-radius: 5px;
+    color: #8899BB;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .nav-btn:hover:not(:disabled) { background: #252A35; color: #E8EDF8; border-color: #2A3347; }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .viewer-page-info {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: #8899BB;
+    background: #1A1D24;
+    border: 1px solid #1E2535;
+    border-radius: 4px;
+    padding: 0.28rem 0.7rem;
+    white-space: nowrap;
+  }
+
   .viewer-type-badge {
     font-family: 'DM Mono', monospace;
-    font-size: 0.62rem;
+    font-size: 0.6rem;
     color: #334466;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -740,21 +838,18 @@
   .viewer-download {
     display: flex; align-items: center; gap: 0.35rem;
     font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    color: var(--teal, #0D7C6E);
-    text-decoration: none;
-    transition: color 0.12s;
+    font-size: 0.68rem;
+    color: #0D7C6E;
     cursor: pointer;
     background: none;
     border: none;
     padding: 0;
+    transition: color 0.12s;
   }
   .viewer-download:hover { color: #2BB5A0; }
-
-  /* Slide mode keyboard hint */
   .slide-hint {
     font-family: 'DM Mono', monospace;
-    font-size: 0.62rem;
+    font-size: 0.6rem;
     color: #334466;
   }
 
@@ -871,7 +966,7 @@
       </div>
 
       <!-- 02 -->
-      <div class="portfolio-card reveal" onclick="openViewer('slides','Linear Teardown — Stakeholder Visibility Gap','https://khgkwpvpiqdwqtqszqwd.supabase.co/storage/v1/object/public/jishu_portfolio/Linear_Teardown_Zine%20(1).pdf')">
+      <div class="portfolio-card reveal" onclick="openViewer('slides','Linear Teardown — Stakeholder Visibility Gap','YOUR_LINEAR_TEARDOWN_PDF_URL')">
         <div class="pc-number">02</div>
         <div class="pc-type">Product Teardown</div>
         <div class="pc-title">Linear — The Stakeholder Visibility Gap</div>
@@ -880,7 +975,7 @@
       </div>
 
       <!-- 03 -->
-      <div class="portfolio-card reveal" onclick="openViewer('pdf','Stakeholder View PRD','https://khgkwpvpiqdwqtqszqwd.supabase.co/storage/v1/object/public/jishu_portfolio/Stakeholder_View_PRD%20(1).pdf')">
+      <div class="portfolio-card reveal" onclick="openViewer('pdf','Stakeholder View PRD','YOUR_PRD_PDF_URL')">
         <div class="pc-number">03</div>
         <div class="pc-type">PRD · Product Spec</div>
         <div class="pc-title">Stakeholder View — Full Product Requirements Document</div>
@@ -889,7 +984,7 @@
       </div>
 
       <!-- 04 -->
-      <div class="portfolio-card reveal" onclick="openViewer('pdf','Data Review Agent — Impact Story','https://khgkwpvpiqdwqtqszqwd.supabase.co/storage/v1/object/public/jishu_portfolio/Data_Review_Agent_Impact_Card%20(1).pdf')">
+      <div class="portfolio-card reveal" onclick="openViewer('pdf','Data Review Agent — Impact Story','YOUR_IMPACT_STORY_PDF_URL')">
         <div class="pc-number">04</div>
         <div class="pc-type">Impact Story · Discovery</div>
         <div class="pc-title">Data Review Agent — Catching Bad Inputs Early</div>
@@ -1018,30 +1113,52 @@
 <div class="viewer-modal" id="viewer-modal" onclick="handleViewerOverlay(event)">
   <div class="viewer-wrap" id="viewer-wrap">
 
+    <!-- Top bar -->
     <div class="viewer-topbar">
       <div class="viewer-title" id="viewer-title">Loading…</div>
-      <div class="viewer-controls">
-        <button class="viewer-nav" id="viewer-prev" onclick="viewerNav(-1)" title="Previous page">&#8592;</button>
-        <span class="viewer-page-info" id="viewer-page-info">— / —</span>
-        <button class="viewer-nav" id="viewer-next" onclick="viewerNav(1)" title="Next page">&#8594;</button>
+      <div class="viewer-topbar-right">
+        <!-- Zoom controls -->
+        <div class="zoom-group">
+          <button class="zoom-btn" onclick="adjustZoom(-0.25)" title="Zoom out">−</button>
+          <span class="zoom-level" id="zoom-level">100%</span>
+          <button class="zoom-btn" onclick="adjustZoom(0.25)" title="Zoom in">+</button>
+          <button class="zoom-btn" onclick="resetZoom()" title="Fit to window" style="font-size:0.7rem;width:auto;padding:0 4px;">Fit</button>
+        </div>
         <button class="viewer-close" onclick="closeViewer()">✕ &nbsp;Close</button>
       </div>
     </div>
 
-    <div class="viewer-stage" id="viewer-stage">
-      <div class="viewer-loading" id="viewer-loading">
-        <div class="viewer-spinner"></div>
-        <span>Loading document…</span>
+    <!-- Body: sidebar + stage -->
+    <div class="viewer-body">
+
+      <!-- Thumbnail sidebar -->
+      <div class="viewer-sidebar" id="viewer-sidebar"></div>
+
+      <!-- Main canvas stage -->
+      <div class="viewer-stage" id="viewer-stage">
+        <div class="viewer-loading" id="viewer-loading">
+          <div class="viewer-spinner"></div>
+          <span id="viewer-loading-text">Loading document…</span>
+        </div>
+        <div class="viewer-canvas-wrap" id="viewer-canvas-wrap" style="display:none;">
+          <canvas id="viewer-canvas"></canvas>
+        </div>
       </div>
-      <div class="viewer-canvas-wrap" id="viewer-canvas-wrap" style="display:none;">
-        <canvas id="viewer-canvas"></canvas>
-      </div>
+
     </div>
 
+    <!-- Bottom bar -->
     <div class="viewer-bottombar">
       <span class="viewer-type-badge" id="viewer-type-badge">Document</span>
-      <span class="slide-hint" id="viewer-hint"></span>
-      <button class="viewer-download" id="viewer-download-btn" onclick="viewerDownload()">↓ Download</button>
+      <div class="nav-group">
+        <button class="nav-btn" id="viewer-prev" onclick="viewerNav(-1)" disabled>← Previous</button>
+        <span class="viewer-page-info" id="viewer-page-info">— / —</span>
+        <button class="nav-btn" id="viewer-next" onclick="viewerNav(1)" disabled>Next →</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <span class="slide-hint" id="viewer-hint"></span>
+        <button class="viewer-download" onclick="viewerDownload()">↓ Download</button>
+      </div>
     </div>
 
   </div>
@@ -1050,41 +1167,81 @@
 <script>
 // ── VIEWER STATE ──────────────────────────────────────────────────────────────
 let vPdf = null, vPage = 1, vTotal = 0, vMode = 'pdf', vUrl = '';
+let vBaseScale = 1, vZoom = 1;
+const ZOOM_MIN = 0.5, ZOOM_MAX = 3;
 
 async function openViewer(mode, title, url) {
   if (!url || url.startsWith('YOUR_')) {
     alert('PDF URL not set yet. Upload to Supabase and paste the URL into the portfolio code.');
     return;
   }
-  vMode = mode;
-  vUrl = url;
-  vPage = 1;
+  vMode = mode; vUrl = url; vPage = 1; vZoom = 1;
 
   document.getElementById('viewer-title').textContent = title;
   document.getElementById('viewer-type-badge').textContent = mode === 'slides' ? 'Slide Deck' : 'Document';
-  document.getElementById('viewer-hint').textContent = mode === 'slides' ? 'Use ← → keys to navigate' : '';
+  document.getElementById('viewer-hint').textContent = mode === 'slides' ? '← → keys to navigate' : '← → or click thumbnails';
   document.getElementById('viewer-loading').style.display = 'flex';
+  document.getElementById('viewer-loading-text').textContent = 'Loading document…';
   document.getElementById('viewer-canvas-wrap').style.display = 'none';
+  document.getElementById('viewer-sidebar').innerHTML = '';
   document.getElementById('viewer-page-info').textContent = '— / —';
   document.getElementById('viewer-prev').disabled = true;
   document.getElementById('viewer-next').disabled = true;
+  document.getElementById('zoom-level').textContent = '100%';
 
   document.getElementById('viewer-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
 
   try {
-    const loadingTask = pdfjsLib.getDocument(url);
-    vPdf = await loadingTask.promise;
+    vPdf = await pdfjsLib.getDocument(url).promise;
     vTotal = vPdf.numPages;
+    // Build thumbnails
+    await buildThumbnails();
     await renderPage(1);
   } catch(e) {
     document.getElementById('viewer-loading').innerHTML =
-      '<span style="color:#E05C6A;">Failed to load document.<br>Check the URL and CORS settings.</span>';
+      '<div class="viewer-spinner" style="display:none"></div><span style="color:#E05C6A;text-align:center;">Failed to load document.<br><small>Check the URL and CORS settings.</small></span>';
   }
+}
+
+async function buildThumbnails() {
+  const sidebar = document.getElementById('viewer-sidebar');
+  sidebar.innerHTML = '';
+  for (let i = 1; i <= vTotal; i++) {
+    const page = await vPdf.getPage(i);
+    const vp = page.getViewport({ scale: 0.18 });
+    const wrapper = document.createElement('div');
+    wrapper.className = 'thumb-item' + (i === 1 ? ' active' : '');
+    wrapper.dataset.page = i;
+    wrapper.onclick = () => renderPage(i);
+
+    const tc = document.createElement('canvas');
+    tc.className = 'thumb-canvas';
+    tc.width = vp.width;
+    tc.height = vp.height;
+    await page.render({ canvasContext: tc.getContext('2d'), viewport: vp }).promise;
+
+    const num = document.createElement('span');
+    num.className = 'thumb-num';
+    num.textContent = i;
+
+    wrapper.appendChild(tc);
+    wrapper.appendChild(num);
+    sidebar.appendChild(wrapper);
+  }
+}
+
+function getBaseScale() {
+  const stage = document.getElementById('viewer-stage');
+  const sidebar = document.getElementById('viewer-sidebar');
+  const stageW = stage.clientWidth - sidebar.clientWidth - 32;
+  const stageH = stage.clientHeight - 32;
+  return null; // computed per page
 }
 
 async function renderPage(num) {
   document.getElementById('viewer-loading').style.display = 'flex';
+  document.getElementById('viewer-loading-text').textContent = 'Rendering…';
   document.getElementById('viewer-canvas-wrap').style.display = 'none';
 
   const page = await vPdf.getPage(num);
@@ -1092,16 +1249,15 @@ async function renderPage(num) {
   const canvas = document.getElementById('viewer-canvas');
   const ctx = canvas.getContext('2d');
 
-  // Scale to fit the stage
-  const stageW = stage.clientWidth;
-  const stageH = stage.clientHeight;
   const vp0 = page.getViewport({ scale: 1 });
-  const scale = Math.min(stageW / vp0.width, stageH / vp0.height) * 0.97;
+  const stageW = stage.clientWidth - 32;
+  const stageH = stage.clientHeight - 32;
+  vBaseScale = Math.min(stageW / vp0.width, stageH / vp0.height);
+  const scale = vBaseScale * vZoom;
   const vp = page.getViewport({ scale });
 
   canvas.width  = vp.width;
   canvas.height = vp.height;
-
   await page.render({ canvasContext: ctx, viewport: vp }).promise;
 
   vPage = num;
@@ -1109,6 +1265,16 @@ async function renderPage(num) {
     vMode === 'slides' ? `${num} / ${vTotal}` : `Page ${num} of ${vTotal}`;
   document.getElementById('viewer-prev').disabled = num <= 1;
   document.getElementById('viewer-next').disabled = num >= vTotal;
+  document.getElementById('zoom-level').textContent = Math.round(vZoom * 100) + '%';
+
+  // Update thumbnail active state
+  document.querySelectorAll('.thumb-item').forEach(t => {
+    t.classList.toggle('active', parseInt(t.dataset.page) === num);
+  });
+
+  // Scroll active thumb into view
+  const activeThumb = document.querySelector('.thumb-item.active');
+  if (activeThumb) activeThumb.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 
   document.getElementById('viewer-loading').style.display = 'none';
   document.getElementById('viewer-canvas-wrap').style.display = 'flex';
@@ -1117,6 +1283,16 @@ async function renderPage(num) {
 function viewerNav(dir) {
   const next = vPage + dir;
   if (next >= 1 && next <= vTotal) renderPage(next);
+}
+
+async function adjustZoom(delta) {
+  vZoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, vZoom + delta));
+  await renderPage(vPage);
+}
+
+async function resetZoom() {
+  vZoom = 1;
+  await renderPage(vPage);
 }
 
 function closeViewer() {
@@ -1130,20 +1306,19 @@ function handleViewerOverlay(e) {
 }
 
 function viewerDownload() {
-  if (!vUrl || vUrl.startsWith('YOUR_')) return;
+  if (!vUrl) return;
   const a = document.createElement('a');
-  a.href = vUrl;
-  a.download = '';
-  a.target = '_blank';
-  a.click();
+  a.href = vUrl; a.download = ''; a.target = '_blank'; a.click();
 }
 
-// Keyboard navigation
 document.addEventListener('keydown', e => {
   const modal = document.getElementById('viewer-modal');
   if (!modal.classList.contains('open')) return;
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') viewerNav(1);
-  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   viewerNav(-1);
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); viewerNav(1); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); viewerNav(-1); }
+  if (e.key === '+' || e.key === '=') adjustZoom(0.25);
+  if (e.key === '-') adjustZoom(-0.25);
+  if (e.key === '0') resetZoom();
   if (e.key === 'Escape') closeViewer();
 });
 </script>
