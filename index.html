@@ -22,7 +22,6 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -33,7 +32,6 @@
     font-size: 16px;
   }
 
-  /* ── NOISE TEXTURE OVERLAY ── */
   body::before {
     content: '';
     position: fixed;
@@ -53,11 +51,10 @@
     align-items: center;
     justify-content: space-between;
     padding: 1.1rem 3rem;
-    background: rgba(245, 241, 235, 0.88);
+    background: rgba(245,241,235,0.88);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
   }
-
   .nav-name {
     font-family: 'DM Mono', monospace;
     font-size: 0.85rem;
@@ -66,7 +63,6 @@
     letter-spacing: 0.06em;
     text-decoration: none;
   }
-
   .nav-links { display: flex; gap: 2.2rem; list-style: none; }
   .nav-links a {
     font-size: 0.88rem;
@@ -78,9 +74,7 @@
   }
   .nav-links a:hover { color: var(--blue); }
 
-  /* ── SECTIONS ── */
   section { position: relative; z-index: 1; }
-
   .container { max-width: 1060px; margin: 0 auto; padding: 0 2.5rem; }
 
   /* ── HERO ── */
@@ -91,7 +85,6 @@
     padding-top: 5rem;
     overflow: hidden;
   }
-
   .hero-inner {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -99,9 +92,7 @@
     align-items: center;
     width: 100%;
   }
-
   .hero-left { opacity: 0; animation: fadeUp 0.8s ease forwards 0.1s; }
-
   .hero-eyebrow {
     display: inline-flex;
     align-items: center;
@@ -120,7 +111,6 @@
     height: 1px;
     background: var(--teal);
   }
-
   .hero-name {
     font-family: 'Playfair Display', serif;
     font-size: clamp(3rem, 5vw, 4.5rem);
@@ -129,7 +119,6 @@
     color: var(--ink);
     margin-bottom: 0.4rem;
   }
-
   .hero-role {
     font-family: 'Playfair Display', serif;
     font-size: clamp(1.4rem, 2.5vw, 2rem);
@@ -138,7 +127,6 @@
     font-style: italic;
     margin-bottom: 1.8rem;
   }
-
   .hero-bio {
     font-size: 1.02rem;
     color: var(--mid);
@@ -146,9 +134,7 @@
     max-width: 480px;
     margin-bottom: 2.4rem;
   }
-
   .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
-
   .btn-primary {
     display: inline-flex;
     align-items: center;
@@ -164,7 +150,6 @@
     transition: background 0.2s, transform 0.15s;
   }
   .btn-primary:hover { background: #153f6f; transform: translateY(-1px); }
-
   .btn-secondary {
     display: inline-flex;
     align-items: center;
@@ -181,14 +166,12 @@
   }
   .btn-secondary:hover { border-color: var(--blue); color: var(--blue); transform: translateY(-1px); }
 
-  /* Hero right — decorative card stack */
   .hero-right {
     opacity: 0;
     animation: fadeUp 0.8s ease forwards 0.35s;
     position: relative;
     height: 420px;
   }
-
   .hero-card {
     position: absolute;
     background: var(--card);
@@ -197,26 +180,9 @@
     padding: 1.6rem;
     box-shadow: 0 4px 24px rgba(27,26,46,0.06);
   }
-
-  .hc-1 {
-    width: 280px;
-    top: 20px; left: 20px;
-    transform: rotate(-3deg);
-    z-index: 1;
-  }
-  .hc-2 {
-    width: 300px;
-    top: 80px; left: 80px;
-    transform: rotate(1.5deg);
-    z-index: 2;
-  }
-  .hc-3 {
-    width: 260px;
-    top: 160px; left: 160px;
-    transform: rotate(-1deg);
-    z-index: 3;
-  }
-
+  .hc-1 { width: 280px; top: 20px; left: 20px; transform: rotate(-3deg); z-index: 1; }
+  .hc-2 { width: 300px; top: 80px; left: 80px; transform: rotate(1.5deg); z-index: 2; }
+  .hc-3 { width: 260px; top: 160px; left: 160px; transform: rotate(-1deg); z-index: 3; }
   .hc-label {
     font-family: 'DM Mono', monospace;
     font-size: 0.7rem;
@@ -234,7 +200,6 @@
     margin-bottom: 0.4rem;
   }
   .hc-sub { font-size: 0.82rem; color: var(--mid); }
-
   .hc-tag {
     display: inline-block;
     margin-top: 0.8rem;
@@ -246,15 +211,7 @@
     border-radius: 3px;
   }
 
-  /* ── DIVIDER ── */
-  .section-divider {
-    width: 3rem;
-    height: 3px;
-    background: var(--teal);
-    border-radius: 2px;
-    margin-bottom: 1rem;
-  }
-
+  /* ── SECTION COMMONS ── */
   .section-label {
     font-family: 'DM Mono', monospace;
     font-size: 0.75rem;
@@ -263,7 +220,6 @@
     text-transform: uppercase;
     margin-bottom: 0.6rem;
   }
-
   .section-heading {
     font-family: 'Playfair Display', serif;
     font-size: clamp(1.8rem, 3vw, 2.6rem);
@@ -272,7 +228,6 @@
     color: var(--ink);
     margin-bottom: 0.8rem;
   }
-
   .section-sub {
     font-size: 1rem;
     color: var(--mid);
@@ -281,11 +236,7 @@
   }
 
   /* ── ABOUT ── */
-  #about {
-    padding: 7rem 0;
-    border-top: 1px solid var(--border);
-  }
-
+  #about { padding: 7rem 0; border-top: 1px solid var(--border); }
   .about-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -293,16 +244,8 @@
     align-items: start;
     margin-top: 3.5rem;
   }
-
-  .about-text p {
-    font-size: 1.02rem;
-    color: var(--mid);
-    line-height: 1.85;
-    margin-bottom: 1.2rem;
-  }
-
+  .about-text p { font-size: 1.02rem; color: var(--mid); line-height: 1.85; margin-bottom: 1.2rem; }
   .about-facts { display: flex; flex-direction: column; gap: 1.2rem; }
-
   .fact-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -312,7 +255,6 @@
     transition: transform 0.2s, box-shadow 0.2s;
   }
   .fact-card:hover { transform: translateX(4px); box-shadow: 0 4px 16px rgba(27,26,46,0.06); }
-
   .fact-label {
     font-family: 'DM Mono', monospace;
     font-size: 0.72rem;
@@ -321,11 +263,7 @@
     text-transform: uppercase;
     margin-bottom: 0.3rem;
   }
-  .fact-value {
-    font-size: 0.96rem;
-    font-weight: 500;
-    color: var(--ink);
-  }
+  .fact-value { font-size: 0.96rem; font-weight: 500; color: var(--ink); }
 
   /* ── PORTFOLIO ── */
   #portfolio {
@@ -334,12 +272,10 @@
     position: relative;
     overflow: hidden;
   }
-
   #portfolio::before {
     content: 'WORK';
     position: absolute;
-    top: -0.1em;
-    right: -0.05em;
+    top: -0.1em; right: -0.05em;
     font-family: 'Playfair Display', serif;
     font-size: 18rem;
     font-weight: 700;
@@ -348,7 +284,6 @@
     pointer-events: none;
     user-select: none;
   }
-
   #portfolio .section-label { color: var(--amber); }
   #portfolio .section-heading { color: #fff; }
   #portfolio .section-sub { color: rgba(255,255,255,0.55); }
@@ -359,7 +294,6 @@
     gap: 1.4rem;
     margin-top: 3.5rem;
   }
-
   .portfolio-card {
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(255,255,255,0.1);
@@ -373,18 +307,15 @@
     flex-direction: column;
     cursor: pointer;
   }
-
   .portfolio-card:hover {
     background: rgba(255,255,255,0.07);
     border-color: rgba(255,255,255,0.2);
     transform: translateY(-3px);
   }
-
   .portfolio-card::after {
     content: '↗';
     position: absolute;
-    top: 1.4rem;
-    right: 1.4rem;
+    top: 1.4rem; right: 1.4rem;
     font-size: 1.1rem;
     color: rgba(255,255,255,0.2);
     transition: color 0.2s, transform 0.2s;
@@ -398,7 +329,6 @@
     letter-spacing: 0.1em;
     margin-bottom: 1rem;
   }
-
   .pc-type {
     display: inline-flex;
     align-items: center;
@@ -410,16 +340,13 @@
     text-transform: uppercase;
     margin-bottom: 0.7rem;
   }
-
   .pc-type::before {
     content: '';
     display: block;
-    width: 6px;
-    height: 6px;
+    width: 6px; height: 6px;
     border-radius: 50%;
     background: var(--amber);
   }
-
   .pc-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.18rem;
@@ -428,7 +355,6 @@
     line-height: 1.3;
     margin-bottom: 0.7rem;
   }
-
   .pc-desc {
     font-size: 0.88rem;
     color: rgba(255,255,255,0.5);
@@ -436,9 +362,7 @@
     flex: 1;
     margin-bottom: 1.4rem;
   }
-
   .pc-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-
   .pc-tag {
     padding: 0.2rem 0.6rem;
     background: rgba(255,255,255,0.07);
@@ -446,10 +370,9 @@
     border-radius: 3px;
     font-size: 0.72rem;
     color: rgba(255,255,255,0.5);
-    font-weight: 400;
   }
 
-  /* Featured card */
+  /* Featured */
   .portfolio-card.featured {
     grid-column: span 2;
     background: linear-gradient(135deg, rgba(27,79,138,0.25) 0%, rgba(13,124,110,0.15) 100%);
@@ -458,12 +381,10 @@
     gap: 2rem;
     align-items: flex-start;
   }
-
   .portfolio-card.featured:hover {
     background: linear-gradient(135deg, rgba(27,79,138,0.35) 0%, rgba(13,124,110,0.22) 100%);
     border-color: rgba(27,79,138,0.6);
   }
-
   .featured-left { flex: 1; }
   .featured-right {
     flex-shrink: 0;
@@ -473,7 +394,6 @@
     gap: 0.8rem;
     margin-top: 0.5rem;
   }
-
   .featured-stat {
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.1);
@@ -496,11 +416,7 @@
   }
 
   /* ── CONTACT ── */
-  #contact {
-    padding: 7rem 0;
-    border-top: 1px solid var(--border);
-  }
-
+  #contact { padding: 7rem 0; border-top: 1px solid var(--border); }
   .contact-inner {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -508,16 +424,7 @@
     align-items: start;
     margin-top: 3.5rem;
   }
-
-  .contact-text p {
-    font-size: 1rem;
-    color: var(--mid);
-    line-height: 1.8;
-    margin-bottom: 2rem;
-  }
-
   .contact-links { display: flex; flex-direction: column; gap: 0.9rem; }
-
   .contact-link {
     display: flex;
     align-items: center;
@@ -534,21 +441,15 @@
     transform: translateX(4px);
     box-shadow: 0 4px 16px rgba(27,79,138,0.08);
   }
-
   .cl-icon {
-    width: 38px;
-    height: 38px;
+    width: 38px; height: 38px;
     border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-size: 1.1rem;
     flex-shrink: 0;
   }
-
   .cl-label { font-size: 0.8rem; color: var(--lite); margin-bottom: 0.1rem; }
   .cl-value { font-size: 0.95rem; font-weight: 500; color: var(--ink); }
-
   .contact-note {
     margin-top: 3.5rem;
     padding: 2rem;
@@ -557,7 +458,6 @@
     border-radius: 10px;
     border-left: 3px solid var(--amber);
   }
-
   .contact-note p {
     font-family: 'Playfair Display', serif;
     font-size: 1.15rem;
@@ -576,35 +476,17 @@
     position: relative;
     z-index: 1;
   }
-
-  .footer-name {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
-    color: var(--lite);
-  }
-
-  .footer-copy {
-    font-size: 0.8rem;
-    color: var(--lite);
-  }
+  .footer-name { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--lite); }
+  .footer-copy { font-size: 0.8rem; color: var(--lite); }
 
   /* ── ANIMATIONS ── */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(24px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  .reveal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.65s ease, transform 0.65s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* ── SCROLLBAR ── */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--warm); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -622,84 +504,78 @@
     footer { flex-direction: column; gap: 0.5rem; text-align: center; }
   }
 
-  /* ── PROTOTYPE MODAL ── */
+  /* ── PROTOTYPE MODAL — 16:9 WINDOWED ── */
   .proto-modal {
     display: none;
-    position: fixed; inset: 0;
-    background: rgba(10,12,18,0.92);
-    backdrop-filter: blur(8px);
+    position: fixed;
+    inset: 0;
     z-index: 500;
+    background: rgba(10,12,20,0.82);
+    backdrop-filter: blur(6px);
     align-items: center;
     justify-content: center;
-    padding: 1.5rem;
+    padding: 2rem;
   }
   .proto-modal.open { display: flex; }
 
   .proto-wrap {
-    background: #0F1117;
-    border: 1px solid #2A3347;
-    border-radius: 12px;
-    overflow: hidden;
-    width: 100%;
-    max-width: 1100px;
-    height: 90vh;
+    width: min(92vw, calc(92vh * 16 / 9));
     display: flex;
     flex-direction: column;
-    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
-    animation: modalIn 0.3s cubic-bezier(0.4,0,0.2,1);
+    background: #1A1A2E;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06);
+    animation: modalIn 0.25s cubic-bezier(0.4,0,0.2,1);
   }
   @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.96) translateY(12px); }
+    from { opacity: 0; transform: scale(0.97) translateY(10px); }
     to   { opacity: 1; transform: scale(1) translateY(0); }
   }
-
   .proto-topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.75rem 1.25rem;
-    background: #161B27;
+    padding: 0 1.1rem;
+    height: 38px;
+    background: #1A1A2E;
     border-bottom: 1px solid #2A3347;
     flex-shrink: 0;
   }
-
   .proto-label {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.6rem;
     font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: #8899BB;
   }
   .proto-dot {
-    width: 8px; height: 8px;
+    width: 7px; height: 7px;
     border-radius: 50%;
     background: #2BB5A0;
     animation: blink 2s ease-in-out infinite;
   }
-  @keyframes blink {
-    0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
-  }
-
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
   .proto-close {
-    display: flex; align-items: center; gap: 0.5rem;
-    padding: 0.45rem 0.9rem;
+    display: flex; align-items: center; gap: 0.4rem;
+    padding: 0.28rem 0.75rem;
     background: transparent;
     border: 1px solid #2A3347;
-    border-radius: 5px;
+    border-radius: 4px;
     color: #8899BB;
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     cursor: pointer;
     transition: all 0.15s;
   }
-  .proto-close:hover { border-color: #344060; color: #E8EDF8; }
-
+  .proto-close:hover { border-color: #445070; color: #E8EDF8; }
   .proto-frame {
-    flex: 1;
-    border: none;
     width: 100%;
-    background: #0F1117;
+    aspect-ratio: 16 / 9;
+    border: none;
+    display: block;
+    background: #F3F3F3;
   }
 </style>
 </head>
@@ -719,20 +595,16 @@
 <section id="hero">
   <div class="container">
     <div class="hero-inner">
-
       <div class="hero-left">
         <div class="hero-eyebrow">Product Manager</div>
         <h1 class="hero-name">Jishuraaj<br>Nath.</h1>
         <p class="hero-role">Building products people trust.</p>
-        <p class="hero-bio">
-          Associate Product Manager at Zemoso Labs with experience building 0→1 AI-powered products in B2B SaaS environments. Working across the full product lifecycle — from discovery to stakeholder validation.
-        </p>
+        <p class="hero-bio">Associate Product Manager at Zemoso Labs with experience building 0→1 AI-powered products in B2B SaaS environments. Working across the full product lifecycle — from discovery to stakeholder validation.</p>
         <div class="hero-ctas">
           <a href="#portfolio" class="btn-primary">View my work →</a>
           <a href="#contact" class="btn-secondary">Get in touch</a>
         </div>
       </div>
-
       <div class="hero-right">
         <div class="hero-card hc-1">
           <div class="hc-label">Case Study</div>
@@ -753,7 +625,6 @@
           <span class="hc-tag">AI Tooling</span>
         </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -772,26 +643,11 @@
         <p>I work at the intersection of structured product thinking and rapid experimentation — using tools like Claude to compress the distance between idea and validated prototype from days to minutes.</p>
       </div>
       <div class="about-facts reveal">
-        <div class="fact-card">
-          <div class="fact-label">Current role</div>
-          <div class="fact-value">Associate Product Manager · Zemoso Labs</div>
-        </div>
-        <div class="fact-card">
-          <div class="fact-label">Experience</div>
-          <div class="fact-value">0→1 product building · Feature development · Client-facing consulting</div>
-        </div>
-        <div class="fact-card">
-          <div class="fact-label">Domain focus</div>
-          <div class="fact-value">B2B SaaS · AI-powered products · Regulatory tech</div>
-        </div>
-        <div class="fact-card">
-          <div class="fact-label">Superpower</div>
-          <div class="fact-value">AI-native prototyping — design system → Claude skills → validated prototype, same day</div>
-        </div>
-        <div class="fact-card">
-          <div class="fact-label">Location</div>
-          <div class="fact-value">Assam, India · Open to remote & relocation</div>
-        </div>
+        <div class="fact-card"><div class="fact-label">Current role</div><div class="fact-value">Associate Product Manager · Zemoso Labs</div></div>
+        <div class="fact-card"><div class="fact-label">Experience</div><div class="fact-value">0→1 product building · Feature development · Client-facing consulting</div></div>
+        <div class="fact-card"><div class="fact-label">Domain focus</div><div class="fact-value">B2B SaaS · AI-powered products · Regulatory tech</div></div>
+        <div class="fact-card"><div class="fact-label">Superpower</div><div class="fact-value">AI-native prototyping — design system → Claude skills → validated prototype, same day</div></div>
+        <div class="fact-card"><div class="fact-label">Location</div><div class="fact-value">Assam, India · Open to remote &amp; relocation</div></div>
       </div>
     </div>
   </div>
@@ -805,10 +661,9 @@
       <h2 class="section-heading">Portfolio.</h2>
       <p class="section-sub">Five pieces spanning case studies, teardowns, PRDs, impact stories, and process work. Each one is a different facet of how I think about product.</p>
     </div>
-
     <div class="portfolio-grid">
 
-      <!-- Featured: AI QC Case Study -->
+      <!-- 01 Featured -->
       <div class="portfolio-card featured reveal" style="cursor:default;">
         <div class="featured-left">
           <div class="pc-number">01</div>
@@ -823,84 +678,51 @@
             <span class="pc-tag">AI Prototyping</span>
           </div>
           <div style="display:flex;gap:0.75rem;margin-top:1.2rem;flex-wrap:wrap;">
-            <button onclick="openPrototype()" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.1rem;background:var(--teal);color:#0F1117;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;border:none;border-radius:5px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='#0a9e8d'" onmouseout="this.style.background='var(--teal)'">
-              ▶ &nbsp;Try the prototype
-            </button>
-            <a href="https://drive.google.com/" target="_blank" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.1rem;border:1.5px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;border-radius:5px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.5)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='rgba(255,255,255,0.7)'">
-              ↗ &nbsp;View case study
-            </a>
+            <button onclick="openPrototype()" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.1rem;background:var(--teal);color:#0F1117;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;border:none;border-radius:5px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='#0a9e8d'" onmouseout="this.style.background='var(--teal)'">▶ &nbsp;Try the prototype</button>
+            <a href="https://drive.google.com/" target="_blank" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.1rem;border:1.5px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;border-radius:5px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.5)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='rgba(255,255,255,0.7)'">↗ &nbsp;View case study</a>
           </div>
         </div>
         <div class="featured-right">
-          <div class="featured-stat">
-            <span class="featured-stat-n">~50%</span>
-            <span class="featured-stat-l">QC time reduced</span>
-          </div>
-          <div class="featured-stat">
-            <span class="featured-stat-n">0</span>
-            <span class="featured-stat-l">Revision cycles</span>
-          </div>
-          <div class="featured-stat">
-            <span class="featured-stat-n">10</span>
-            <span class="featured-stat-l">Process stages</span>
-          </div>
+          <div class="featured-stat"><span class="featured-stat-n">~50%</span><span class="featured-stat-l">QC time reduced</span></div>
+          <div class="featured-stat"><span class="featured-stat-n">0</span><span class="featured-stat-l">Revision cycles</span></div>
+          <div class="featured-stat"><span class="featured-stat-n">10</span><span class="featured-stat-l">Process stages</span></div>
         </div>
       </div>
 
-      <!-- Linear Teardown -->
-      <div class="portfolio-card reveal" onclick="window.open('https://drive.google.com/file/d/1Cm0K3NLgBjMIEj60cBDKQyN_yYuAlh60/view?usp=drive_link')">
+      <!-- 02 -->
+      <div class="portfolio-card reveal" onclick="window.open('https://drive.google.com/file/d/1Cm0K3NLgBjMIEj60cBDKQyN_yYuAlh60/view?usp=drive_link','_blank')">
         <div class="pc-number">02</div>
         <div class="pc-type">Product Teardown</div>
         <div class="pc-title">Linear — The Stakeholder Visibility Gap</div>
         <div class="pc-desc">A 10-slide zine-style teardown of Linear. Identifies the cross-functional visibility gap, proposes the Stakeholder View feature, and frames success metrics. Deliberately opinionated and visually distinct.</div>
-        <div class="pc-tags">
-          <span class="pc-tag">B2B SaaS</span>
-          <span class="pc-tag">Competitive Analysis</span>
-          <span class="pc-tag">Feature Proposal</span>
-          <span class="pc-tag">Metrics</span>
-        </div>
+        <div class="pc-tags"><span class="pc-tag">B2B SaaS</span><span class="pc-tag">Competitive Analysis</span><span class="pc-tag">Feature Proposal</span><span class="pc-tag">Metrics</span></div>
       </div>
 
-      <!-- PRD -->
-      <div class="portfolio-card reveal" onclick="window.open('https://drive.google.com/file/d/1poKfiFNqBnQzhK4j6pmkg3SewGeXMq__/view?usp=drive_link')">
+      <!-- 03 -->
+      <div class="portfolio-card reveal" onclick="window.open('https://drive.google.com/file/d/1poKfiFNqBnQzhK4j6pmkg3SewGeXMq__/view?usp=drive_link','_blank')">
         <div class="pc-number">03</div>
         <div class="pc-type">PRD · Product Spec</div>
         <div class="pc-title">Stakeholder View — Full Product Requirements Document</div>
-        <div class="pc-desc">A complete PRD for the Stakeholder View feature identified in the Linear teardown. Covers personas, goals, user stories, functional requirements, success metrics, edge cases, rollout plan, and risk register.</div>
-        <div class="pc-tags">
-          <span class="pc-tag">PRD</span>
-          <span class="pc-tag">User Stories</span>
-          <span class="pc-tag">Edge Cases</span>
-          <span class="pc-tag">Rollout</span>
-        </div>
+        <div class="pc-desc">A complete PRD for the Stakeholder View feature. Covers personas, goals, user stories, functional requirements, success metrics, edge cases, rollout plan, and risk register.</div>
+        <div class="pc-tags"><span class="pc-tag">PRD</span><span class="pc-tag">User Stories</span><span class="pc-tag">Edge Cases</span><span class="pc-tag">Rollout</span></div>
       </div>
 
-      <!-- Impact Story -->
-      <div class="portfolio-card reveal" onclick="window.open('https://drive.google.com/file/d/1VYXZdgnoDi_vIIQO3FuQNXzjt4M7zBih/view?usp=drive_link')">
+      <!-- 04 -->
+      <div class="portfolio-card reveal" onclick="window.open('https://drive.google.com/file/d/1VYXZdgnoDi_vIIQO3FuQNXzjt4M7zBih/view?usp=drive_link','_blank')">
         <div class="pc-number">04</div>
         <div class="pc-type">Impact Story · Discovery</div>
         <div class="pc-title">Data Review Agent — Catching Bad Inputs Early</div>
         <div class="pc-desc">Discovery-stage impact story of an AI validation agent for medical writing pipelines. Identified through three-channel research — interviews, observation, and personal product use. Validated and added to roadmap.</div>
-        <div class="pc-tags">
-          <span class="pc-tag">Discovery</span>
-          <span class="pc-tag">Problem Framing</span>
-          <span class="pc-tag">AI Pipeline</span>
-          <span class="pc-tag">Roadmap</span>
-        </div>
+        <div class="pc-tags"><span class="pc-tag">Discovery</span><span class="pc-tag">Problem Framing</span><span class="pc-tag">AI Pipeline</span><span class="pc-tag">Roadmap</span></div>
       </div>
 
-      <!-- AI Prototyping -->
-      <div class="portfolio-card reveal" onclick="window.open('https://drive.google.com/file/d/1b_87Fsk7YP7eFmU30nc38gMIcITYu4YQ/view?usp=drive_link')">
+      <!-- 05 -->
+      <div class="portfolio-card reveal" onclick="window.open('https://drive.google.com/file/d/1b_87Fsk7YP7eFmU30nc38gMIcITYu4YQ/view?usp=drive_link','_blank')">
         <div class="pc-number">05</div>
         <div class="pc-type">Process Story · AI Tooling</div>
         <div class="pc-title">From Figma to Claude — AI-Native Prototyping</div>
         <div class="pc-desc">How the PM and design team replaced days of manual Figma work with an AI prototyping workflow. Exported the design system, built Claude skills, and went from prompt to validated prototype in the same meeting.</div>
-        <div class="pc-tags">
-          <span class="pc-tag">AI Tooling</span>
-          <span class="pc-tag">Design Systems</span>
-          <span class="pc-tag">Rapid Prototyping</span>
-          <span class="pc-tag">Claude</span>
-        </div>
+        <div class="pc-tags"><span class="pc-tag">AI Tooling</span><span class="pc-tag">Design Systems</span><span class="pc-tag">Rapid Prototyping</span><span class="pc-tag">Claude</span></div>
       </div>
 
     </div>
@@ -919,24 +741,15 @@
       <div class="contact-links reveal">
         <a href="mailto:jishuraajnath@gmail.com" class="contact-link">
           <div class="cl-icon" style="background:#EAF2FB;">✉️</div>
-          <div>
-            <div class="cl-label">Email</div>
-            <div class="cl-value">jishuraajnath@gmail.com</div>
-          </div>
+          <div><div class="cl-label">Email</div><div class="cl-value">jishuraajnath@gmail.com</div></div>
         </a>
         <a href="tel:+918822342996" class="contact-link">
           <div class="cl-icon" style="background:#E6F4F2;">📞</div>
-          <div>
-            <div class="cl-label">Phone</div>
-            <div class="cl-value">+91 88223 42996</div>
-          </div>
+          <div><div class="cl-label">Phone</div><div class="cl-value">+91 88223 42996</div></div>
         </a>
         <a href="https://www.linkedin.com/in/jishuraajnath-product/" target="_blank" class="contact-link">
           <div class="cl-icon" style="background:#EAF2FB;">💼</div>
-          <div>
-            <div class="cl-label">LinkedIn</div>
-            <div class="cl-value">jishuraajnath-product</div>
-          </div>
+          <div><div class="cl-label">LinkedIn</div><div class="cl-value">jishuraajnath-product</div></div>
         </a>
       </div>
       <div class="contact-note reveal">
@@ -952,49 +765,8 @@
   <span class="footer-copy">Built with Claude · 2026</span>
 </footer>
 
-<script>
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('visible'), i * 80);
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.08 });
-  reveals.forEach(el => observer.observe(el));
-
-  // Active nav link
-  const sections = document.querySelectorAll('section[id]');
-  const navLinks = document.querySelectorAll('.nav-links a');
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(s => {
-      if (window.scrollY >= s.offsetTop - 120) current = s.id;
-    });
-    navLinks.forEach(a => {
-      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--blue)' : '';
-    });
-  });
-
-  // Smooth hero card float
-  const cards = document.querySelectorAll('.hero-card');
-  cards.forEach((card, i) => {
-    card.style.animation = `float${i} ${3 + i * 0.7}s ease-in-out infinite alternate`;
-  });
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes float0 { from { transform: rotate(-3deg) translateY(0); } to { transform: rotate(-3deg) translateY(-8px); } }
-    @keyframes float1 { from { transform: rotate(1.5deg) translateY(0); } to { transform: rotate(1.5deg) translateY(-6px); } }
-    @keyframes float2 { from { transform: rotate(-1deg) translateY(0); } to { transform: rotate(-1deg) translateY(-10px); } }
-  `;
-  document.head.appendChild(style);
-</script>
-
-
-<!-- PROTOTYPE MODAL -->
-<div class="proto-modal" id="proto-modal" onclick="handleModalClick(event)">
+<!-- PROTOTYPE MODAL — FULLSCREEN -->
+<div class="proto-modal" id="proto-modal" onclick="handleOverlayClick(event)">
   <div class="proto-wrap">
     <div class="proto-topbar">
       <div class="proto-label">
@@ -1008,6 +780,39 @@
 </div>
 
 <script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Active nav
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
+    navLinks.forEach(a => { a.style.color = a.getAttribute('href') === '#' + current ? 'var(--blue)' : ''; });
+  });
+
+  // Hero card float
+  const cards = document.querySelectorAll('.hero-card');
+  cards.forEach((card, i) => { card.style.animation = `float${i} ${3 + i * 0.7}s ease-in-out infinite alternate`; });
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes float0 { from{transform:rotate(-3deg) translateY(0)} to{transform:rotate(-3deg) translateY(-8px)} }
+    @keyframes float1 { from{transform:rotate(1.5deg) translateY(0)} to{transform:rotate(1.5deg) translateY(-6px)} }
+    @keyframes float2 { from{transform:rotate(-1deg) translateY(0)} to{transform:rotate(-1deg) translateY(-10px)} }
+  `;
+  document.head.appendChild(style);
+
+  // Prototype modal
   function openPrototype() {
     const modal = document.getElementById('proto-modal');
     const frame = document.getElementById('proto-frame');
@@ -1022,10 +827,10 @@
     frame.src = '';
     document.body.style.overflow = '';
   }
-  function handleModalClick(e) {
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePrototype(); });
+  function handleOverlayClick(e) {
     if (e.target === document.getElementById('proto-modal')) closePrototype();
   }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePrototype(); });
 </script>
 </body>
 </html>
