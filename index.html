@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jishuraaj Nath — Product Manager</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -577,6 +579,185 @@
     display: block;
     background: #F3F3F3;
   }
+
+  /* ── PDF / SLIDE VIEWER MODAL ── */
+  .viewer-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 600;
+    background: rgba(8,10,16,0.88);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .viewer-modal.open { display: flex; }
+
+  .viewer-wrap {
+    width: min(92vw, calc(88vh * 16 / 9));
+    display: flex;
+    flex-direction: column;
+    background: #16191F;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.07);
+    animation: viewerIn 0.22s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes viewerIn {
+    from { opacity:0; transform:scale(0.97) translateY(10px); }
+    to   { opacity:1; transform:scale(1)    translateY(0); }
+  }
+
+  .viewer-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.1rem;
+    height: 44px;
+    background: #0F1117;
+    border-bottom: 1px solid #1E2535;
+    flex-shrink: 0;
+  }
+  .viewer-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: #8899BB;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60%;
+  }
+  .viewer-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .viewer-nav {
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent;
+    border: 1px solid #1E2535;
+    border-radius: 4px;
+    color: #8899BB;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .viewer-nav:hover:not(:disabled) { background: #1E2535; color: #E8EDF8; }
+  .viewer-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .viewer-page-info {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: #556688;
+    padding: 0 0.4rem;
+    white-space: nowrap;
+  }
+  .viewer-close {
+    display: flex; align-items: center; gap: 0.35rem;
+    padding: 0.28rem 0.75rem;
+    background: transparent;
+    border: 1px solid #1E2535;
+    border-radius: 4px;
+    color: #8899BB;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.12s;
+    margin-left: 0.5rem;
+  }
+  .viewer-close:hover { border-color: #445070; color: #E8EDF8; }
+
+  /* Canvas area */
+  .viewer-stage {
+    flex: 1;
+    background: #1A1D24;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 16/9;
+  }
+
+  /* PDF mode — scrollable single page */
+  .viewer-canvas-wrap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  #viewer-canvas {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  /* Loading spinner */
+  .viewer-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: #556688;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+  }
+  .viewer-spinner {
+    width: 32px; height: 32px;
+    border: 2px solid #1E2535;
+    border-top-color: var(--teal);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Bottom bar */
+  .viewer-bottombar {
+    height: 36px;
+    background: #0F1117;
+    border-top: 1px solid #1E2535;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.1rem;
+    flex-shrink: 0;
+  }
+  .viewer-type-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: #334466;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .viewer-download {
+    display: flex; align-items: center; gap: 0.35rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--teal, #0D7C6E);
+    text-decoration: none;
+    transition: color 0.12s;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  .viewer-download:hover { color: #2BB5A0; }
+
+  /* Slide mode keyboard hint */
+  .slide-hint {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: #334466;
+  }
+
 </style>
 </head>
 <body>
@@ -679,7 +860,7 @@
           </div>
           <div style="display:flex;gap:0.75rem;margin-top:1.2rem;flex-wrap:wrap;">
             <button onclick="openPrototype()" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.1rem;background:var(--teal);color:#0F1117;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;border:none;border-radius:5px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='#0a9e8d'" onmouseout="this.style.background='var(--teal)'">▶ &nbsp;Try the prototype</button>
-            <a href="https://drive.google.com/file/d/1dEXnaHLaM97uz7wIsQI5Hj9GRqgDjwEX/view?usp=drive_link" target="_blank" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.1rem;border:1.5px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;border-radius:5px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.5)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='rgba(255,255,255,0.7)'">↗ &nbsp;View case study</a>
+            <button onclick="openViewer('pdf','AI QC Feature — Case Study','https://khgkwpvpiqdwqtqszqwd.supabase.co/storage/v1/object/public/jishu_portfolio/AI%20Aided%20QC%20for%20Writing%20Tool%20(1).pdf')" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.1rem;border:1.5px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;border-radius:5px;background:transparent;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.5)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='rgba(255,255,255,0.7)'">📄 &nbsp;Read case study</button>
           </div>
         </div>
         <div class="featured-right">
@@ -690,7 +871,7 @@
       </div>
 
       <!-- 02 -->
-      <div class="portfolio-card reveal" onclick="window.open('https://drive.google.com/file/d/1Cm0K3NLgBjMIEj60cBDKQyN_yYuAlh60/view?usp=drive_link','_blank')">
+      <div class="portfolio-card reveal" onclick="openViewer('slides','Linear Teardown — Stakeholder Visibility Gap','https://khgkwpvpiqdwqtqszqwd.supabase.co/storage/v1/object/public/jishu_portfolio/Linear_Teardown_Zine%20(1).pdf')">
         <div class="pc-number">02</div>
         <div class="pc-type">Product Teardown</div>
         <div class="pc-title">Linear — The Stakeholder Visibility Gap</div>
@@ -699,7 +880,7 @@
       </div>
 
       <!-- 03 -->
-      <div class="portfolio-card reveal" onclick="window.open('https://drive.google.com/file/d/1poKfiFNqBnQzhK4j6pmkg3SewGeXMq__/view?usp=drive_link','_blank')">
+      <div class="portfolio-card reveal" onclick="openViewer('pdf','Stakeholder View PRD','https://khgkwpvpiqdwqtqszqwd.supabase.co/storage/v1/object/public/jishu_portfolio/Stakeholder_View_PRD%20(1).pdf')">
         <div class="pc-number">03</div>
         <div class="pc-type">PRD · Product Spec</div>
         <div class="pc-title">Stakeholder View — Full Product Requirements Document</div>
@@ -708,7 +889,7 @@
       </div>
 
       <!-- 04 -->
-      <div class="portfolio-card reveal" onclick="window.open('https://drive.google.com/file/d/1VYXZdgnoDi_vIIQO3FuQNXzjt4M7zBih/view?usp=drive_link','_blank')">
+      <div class="portfolio-card reveal" onclick="openViewer('pdf','Data Review Agent — Impact Story','https://khgkwpvpiqdwqtqszqwd.supabase.co/storage/v1/object/public/jishu_portfolio/Data_Review_Agent_Impact_Card%20(1).pdf')">
         <div class="pc-number">04</div>
         <div class="pc-type">Impact Story · Discovery</div>
         <div class="pc-title">Data Review Agent — Catching Bad Inputs Early</div>
@@ -717,7 +898,7 @@
       </div>
 
       <!-- 05 -->
-      <div class="portfolio-card reveal" onclick="window.open('https://drive.google.com/file/d/1b_87Fsk7YP7eFmU30nc38gMIcITYu4YQ/view?usp=drive_link','_blank')">
+      <div class="portfolio-card reveal" onclick="openViewer('slides','From Figma to Claude — AI Prototyping','https://khgkwpvpiqdwqtqszqwd.supabase.co/storage/v1/object/public/jishu_portfolio/AI_Prototyping_Process_Story%20(1).pdf')">
         <div class="pc-number">05</div>
         <div class="pc-type">Process Story · AI Tooling</div>
         <div class="pc-title">From Figma to Claude — AI-Native Prototyping</div>
@@ -832,5 +1013,140 @@
     if (e.target === document.getElementById('proto-modal')) closePrototype();
   }
 </script>
+
+<!-- PDF / SLIDE VIEWER MODAL -->
+<div class="viewer-modal" id="viewer-modal" onclick="handleViewerOverlay(event)">
+  <div class="viewer-wrap" id="viewer-wrap">
+
+    <div class="viewer-topbar">
+      <div class="viewer-title" id="viewer-title">Loading…</div>
+      <div class="viewer-controls">
+        <button class="viewer-nav" id="viewer-prev" onclick="viewerNav(-1)" title="Previous page">&#8592;</button>
+        <span class="viewer-page-info" id="viewer-page-info">— / —</span>
+        <button class="viewer-nav" id="viewer-next" onclick="viewerNav(1)" title="Next page">&#8594;</button>
+        <button class="viewer-close" onclick="closeViewer()">✕ &nbsp;Close</button>
+      </div>
+    </div>
+
+    <div class="viewer-stage" id="viewer-stage">
+      <div class="viewer-loading" id="viewer-loading">
+        <div class="viewer-spinner"></div>
+        <span>Loading document…</span>
+      </div>
+      <div class="viewer-canvas-wrap" id="viewer-canvas-wrap" style="display:none;">
+        <canvas id="viewer-canvas"></canvas>
+      </div>
+    </div>
+
+    <div class="viewer-bottombar">
+      <span class="viewer-type-badge" id="viewer-type-badge">Document</span>
+      <span class="slide-hint" id="viewer-hint"></span>
+      <button class="viewer-download" id="viewer-download-btn" onclick="viewerDownload()">↓ Download</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── VIEWER STATE ──────────────────────────────────────────────────────────────
+let vPdf = null, vPage = 1, vTotal = 0, vMode = 'pdf', vUrl = '';
+
+async function openViewer(mode, title, url) {
+  if (!url || url.startsWith('YOUR_')) {
+    alert('PDF URL not set yet. Upload to Supabase and paste the URL into the portfolio code.');
+    return;
+  }
+  vMode = mode;
+  vUrl = url;
+  vPage = 1;
+
+  document.getElementById('viewer-title').textContent = title;
+  document.getElementById('viewer-type-badge').textContent = mode === 'slides' ? 'Slide Deck' : 'Document';
+  document.getElementById('viewer-hint').textContent = mode === 'slides' ? 'Use ← → keys to navigate' : '';
+  document.getElementById('viewer-loading').style.display = 'flex';
+  document.getElementById('viewer-canvas-wrap').style.display = 'none';
+  document.getElementById('viewer-page-info').textContent = '— / —';
+  document.getElementById('viewer-prev').disabled = true;
+  document.getElementById('viewer-next').disabled = true;
+
+  document.getElementById('viewer-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  try {
+    const loadingTask = pdfjsLib.getDocument(url);
+    vPdf = await loadingTask.promise;
+    vTotal = vPdf.numPages;
+    await renderPage(1);
+  } catch(e) {
+    document.getElementById('viewer-loading').innerHTML =
+      '<span style="color:#E05C6A;">Failed to load document.<br>Check the URL and CORS settings.</span>';
+  }
+}
+
+async function renderPage(num) {
+  document.getElementById('viewer-loading').style.display = 'flex';
+  document.getElementById('viewer-canvas-wrap').style.display = 'none';
+
+  const page = await vPdf.getPage(num);
+  const stage = document.getElementById('viewer-stage');
+  const canvas = document.getElementById('viewer-canvas');
+  const ctx = canvas.getContext('2d');
+
+  // Scale to fit the stage
+  const stageW = stage.clientWidth;
+  const stageH = stage.clientHeight;
+  const vp0 = page.getViewport({ scale: 1 });
+  const scale = Math.min(stageW / vp0.width, stageH / vp0.height) * 0.97;
+  const vp = page.getViewport({ scale });
+
+  canvas.width  = vp.width;
+  canvas.height = vp.height;
+
+  await page.render({ canvasContext: ctx, viewport: vp }).promise;
+
+  vPage = num;
+  document.getElementById('viewer-page-info').textContent =
+    vMode === 'slides' ? `${num} / ${vTotal}` : `Page ${num} of ${vTotal}`;
+  document.getElementById('viewer-prev').disabled = num <= 1;
+  document.getElementById('viewer-next').disabled = num >= vTotal;
+
+  document.getElementById('viewer-loading').style.display = 'none';
+  document.getElementById('viewer-canvas-wrap').style.display = 'flex';
+}
+
+function viewerNav(dir) {
+  const next = vPage + dir;
+  if (next >= 1 && next <= vTotal) renderPage(next);
+}
+
+function closeViewer() {
+  document.getElementById('viewer-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  if (vPdf) { vPdf.destroy(); vPdf = null; }
+}
+
+function handleViewerOverlay(e) {
+  if (e.target === document.getElementById('viewer-modal')) closeViewer();
+}
+
+function viewerDownload() {
+  if (!vUrl || vUrl.startsWith('YOUR_')) return;
+  const a = document.createElement('a');
+  a.href = vUrl;
+  a.download = '';
+  a.target = '_blank';
+  a.click();
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  const modal = document.getElementById('viewer-modal');
+  if (!modal.classList.contains('open')) return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') viewerNav(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   viewerNav(-1);
+  if (e.key === 'Escape') closeViewer();
+});
+</script>
+
 </body>
 </html>
