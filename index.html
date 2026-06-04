@@ -621,6 +621,86 @@
     .featured-right { width: 100%; flex-direction: row; }
     footer { flex-direction: column; gap: 0.5rem; text-align: center; }
   }
+
+  /* ── PROTOTYPE MODAL ── */
+  .proto-modal {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(10,12,18,0.92);
+    backdrop-filter: blur(8px);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .proto-modal.open { display: flex; }
+
+  .proto-wrap {
+    background: #0F1117;
+    border: 1px solid #2A3347;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 1100px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    animation: modalIn 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.96) translateY(12px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .proto-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    background: #161B27;
+    border-bottom: 1px solid #2A3347;
+    flex-shrink: 0;
+  }
+
+  .proto-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: #8899BB;
+  }
+  .proto-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #2BB5A0;
+    animation: blink 2s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+  }
+
+  .proto-close {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.45rem 0.9rem;
+    background: transparent;
+    border: 1px solid #2A3347;
+    border-radius: 5px;
+    color: #8899BB;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .proto-close:hover { border-color: #344060; color: #E8EDF8; }
+
+  .proto-frame {
+    flex: 1;
+    border: none;
+    width: 100%;
+    background: #0F1117;
+  }
 </style>
 </head>
 <body>
@@ -729,7 +809,7 @@
     <div class="portfolio-grid">
 
       <!-- Featured: AI QC Case Study -->
-      <div class="portfolio-card featured reveal" onclick="window.open('https://drive.google.com/file/d/1dEXnaHLaM97uz7wIsQI5Hj9GRqgDjwEX/view?usp=drive_link')">
+      <div class="portfolio-card featured reveal" style="cursor:default;">
         <div class="featured-left">
           <div class="pc-number">01</div>
           <div class="pc-type">Case Study · 0→1 Feature</div>
@@ -741,6 +821,14 @@
             <span class="pc-tag">AI Product</span>
             <span class="pc-tag">Service Blueprint</span>
             <span class="pc-tag">AI Prototyping</span>
+          </div>
+          <div style="display:flex;gap:0.75rem;margin-top:1.2rem;flex-wrap:wrap;">
+            <button onclick="openPrototype()" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.1rem;background:var(--teal);color:#0F1117;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;border:none;border-radius:5px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='#0a9e8d'" onmouseout="this.style.background='var(--teal)'">
+              ▶ &nbsp;Try the prototype
+            </button>
+            <a href="https://drive.google.com/" target="_blank" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.1rem;border:1.5px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;border-radius:5px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.5)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='rgba(255,255,255,0.7)'">
+              ↗ &nbsp;View case study
+            </a>
           </div>
         </div>
         <div class="featured-right">
@@ -904,5 +992,40 @@
   document.head.appendChild(style);
 </script>
 
+
+<!-- PROTOTYPE MODAL -->
+<div class="proto-modal" id="proto-modal" onclick="handleModalClick(event)">
+  <div class="proto-wrap">
+    <div class="proto-topbar">
+      <div class="proto-label">
+        <div class="proto-dot"></div>
+        MedWrite AI — QC Prototype &nbsp;·&nbsp; Interactive demo
+      </div>
+      <button class="proto-close" onclick="closePrototype()">✕ &nbsp;Close</button>
+    </div>
+    <iframe class="proto-frame" id="proto-frame" src="" title="AI QC Prototype"></iframe>
+  </div>
+</div>
+
+<script>
+  function openPrototype() {
+    const modal = document.getElementById('proto-modal');
+    const frame = document.getElementById('proto-frame');
+    frame.src = 'ai-qc-prototype.html';
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePrototype() {
+    const modal = document.getElementById('proto-modal');
+    const frame = document.getElementById('proto-frame');
+    modal.classList.remove('open');
+    frame.src = '';
+    document.body.style.overflow = '';
+  }
+  function handleModalClick(e) {
+    if (e.target === document.getElementById('proto-modal')) closePrototype();
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePrototype(); });
+</script>
 </body>
 </html>
