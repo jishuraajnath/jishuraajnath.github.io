@@ -853,6 +853,131 @@
     color: #334466;
   }
 
+
+  /* ── CHOICE PICKER ── */
+  .picker-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 700;
+    background: rgba(8,10,16,0.7);
+    backdrop-filter: blur(6px);
+    align-items: center;
+    justify-content: center;
+  }
+  .picker-overlay.open { display: flex; }
+
+  .picker-card {
+    background: #16191F;
+    border: 1px solid #2A3347;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 520px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    animation: pickerIn 0.2s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes pickerIn {
+    from { opacity:0; transform:scale(0.95) translateY(8px); }
+    to   { opacity:1; transform:scale(1) translateY(0); }
+  }
+
+  .picker-header {
+    padding: 1.4rem 1.6rem 1rem;
+    border-bottom: 1px solid #1E2535;
+  }
+  .picker-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: #0D7C6E;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+  .picker-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #E8EDF8;
+    line-height: 1.3;
+  }
+
+  .picker-options {
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .picker-option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #1E2535;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.12s;
+    text-align: left;
+    width: 100%;
+  }
+  .picker-option:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: #2A3347;
+    transform: translateX(4px);
+  }
+  .picker-option.primary { border-color: rgba(13,124,110,0.4); }
+  .picker-option.primary:hover { border-color: rgba(13,124,110,0.8); background: rgba(13,124,110,0.1); }
+
+  .picker-icon {
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .picker-option.primary .picker-icon { background: rgba(13,124,110,0.2); }
+  .picker-option:not(.primary) .picker-icon { background: rgba(255,255,255,0.06); }
+
+  .picker-option-text { flex: 1; }
+  .picker-option-label {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #E8EDF8;
+    margin-bottom: 0.2rem;
+  }
+  .picker-option-sub {
+    font-size: 0.75rem;
+    color: #556688;
+    line-height: 1.4;
+  }
+  .picker-option-arrow {
+    color: rgba(255,255,255,0.2);
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: color 0.15s, transform 0.15s;
+  }
+  .picker-option:hover .picker-option-arrow { color: rgba(255,255,255,0.5); transform: translateX(3px); }
+
+  .picker-footer {
+    padding: 0.75rem 1.6rem;
+    border-top: 1px solid #1E2535;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .picker-cancel {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    color: #556688;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    transition: color 0.12s, background 0.12s;
+  }
+  .picker-cancel:hover { color: #8899BB; background: rgba(255,255,255,0.04); }
+
 </style>
 </head>
 <body>
@@ -940,7 +1065,7 @@
     <div class="portfolio-grid">
 
       <!-- 01 Featured -->
-      <div class="portfolio-card featured reveal" style="cursor:default;">
+      <div class="portfolio-card featured reveal" onclick="openChoicePicker(event)" style="cursor:pointer;">
         <div class="featured-left">
           <div class="pc-number">01</div>
           <div class="pc-type">Case Study · 0→1 Feature</div>
@@ -953,9 +1078,8 @@
             <span class="pc-tag">Service Blueprint</span>
             <span class="pc-tag">AI Prototyping</span>
           </div>
-          <div style="display:flex;gap:0.75rem;margin-top:1.2rem;flex-wrap:wrap;">
-            <button onclick="openPrototype()" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.1rem;background:var(--teal);color:#0F1117;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;border:none;border-radius:5px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='#0a9e8d'" onmouseout="this.style.background='var(--teal)'">▶ &nbsp;Try the prototype</button>
-            <button onclick="openViewer('pdf','AI QC Feature — Case Study','https://khgkwpvpiqdwqtqszqwd.supabase.co/storage/v1/object/public/jishu_portfolio/AI%20Aided%20QC%20for%20Writing%20Tool%20(1).pdf')" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.1rem;border:1.5px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;border-radius:5px;background:transparent;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.5)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='rgba(255,255,255,0.7)'">📄 &nbsp;Read case study</button>
+          <div style="margin-top:1.2rem;display:flex;align-items:center;gap:0.5rem;">
+            <span style="font-family:'DM Mono',monospace;font-size:0.68rem;color:rgba(255,255,255,0.35);letter-spacing:0.05em;">Click to explore →</span>
           </div>
         </div>
         <div class="featured-right">
@@ -1321,6 +1445,64 @@ document.addEventListener('keydown', e => {
   if (e.key === '0') resetZoom();
   if (e.key === 'Escape') closeViewer();
 });
+</script>
+
+
+<!-- CHOICE PICKER — Card 01 -->
+<div class="picker-overlay" id="picker-overlay" onclick="handlePickerOverlay(event)">
+  <div class="picker-card">
+    <div class="picker-header">
+      <div class="picker-eyebrow">Case Study · 0→1 Feature</div>
+      <div class="picker-title">AI Quality Control for Regulatory Medical Writing</div>
+    </div>
+    <div class="picker-options">
+      <button class="picker-option primary" onclick="pickerChoose('prototype')">
+        <div class="picker-icon">▶</div>
+        <div class="picker-option-text">
+          <div class="picker-option-label">Try the interactive prototype</div>
+          <div class="picker-option-sub">Experience the AI QC feature hands-on — scan a document, click flags, resolve issues</div>
+        </div>
+        <span class="picker-option-arrow">→</span>
+      </button>
+      <button class="picker-option" onclick="pickerChoose('casestudy')">
+        <div class="picker-icon">📄</div>
+        <div class="picker-option-text">
+          <div class="picker-option-label">Read the case study</div>
+          <div class="picker-option-sub">Full end-to-end case study — process, decisions, impact metrics</div>
+        </div>
+        <span class="picker-option-arrow">→</span>
+      </button>
+    </div>
+    <div class="picker-footer">
+      <button class="picker-cancel" onclick="closePicker()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openChoicePicker(e) {
+    e.stopPropagation();
+    document.getElementById('picker-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePicker() {
+    document.getElementById('picker-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function handlePickerOverlay(e) {
+    if (e.target === document.getElementById('picker-overlay')) closePicker();
+  }
+  function pickerChoose(choice) {
+    closePicker();
+    if (choice === 'prototype') {
+      openPrototype();
+    } else {
+      openViewer('pdf','AI QC Feature — Case Study','https://khgkwpvpiqdwqtqszqwd.supabase.co/storage/v1/object/public/jishu_portfolio/AI%20Aided%20QC%20for%20Writing%20Tool%20(1).pdf');
+    }
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closePicker();
+  });
 </script>
 
 </body>
