@@ -454,7 +454,7 @@
         <div class="hero-piece-right">
           <div class="agent-stat"><span class="agent-stat-n">4</span><span class="agent-stat-l">Specialised agents</span></div>
           <div class="agent-stat"><span class="agent-stat-n">&lt;3m</span><span class="agent-stat-l">Idea to prototype brief</span></div>
-          <div class="agent-stat"><span class="agent-stat-n">Live</span><span class="agent-stat-l">Hosted on Railway</span></div>
+          <div class="agent-stat"><span class="agent-stat-n">Live</span><span class="agent-stat-l">Hosted on Render</span></div>
           <div class="agent-stat"><span class="agent-stat-n">SSE</span><span class="agent-stat-l">Real-time streaming</span></div>
         </div>
       </div>
@@ -580,7 +580,7 @@
       <div class="app-topbar-left">
         <div class="app-live-dot"></div>
         <span class="app-label">Product Research Platform &nbsp;·&nbsp; Live app</span>
-        <span class="app-url">product-research-platform-production.up.railway.app</span>
+        <span class="app-url">product-research-platform.onrender.com//span>
       </div>
       <button class="app-close" onclick="closeAppModal()">✕ &nbsp;Close</button>
     </div>
@@ -746,7 +746,7 @@
   // ── EXTERNAL APP MODAL (Product Research Platform) ────────────────────────
   function openAppModal() {
     const modal = document.getElementById('app-modal');
-    document.getElementById('app-frame').src = 'https://product-research-platform-production.up.railway.app/';
+    document.getElementById('app-frame').src = 'https://product-research-platform.onrender.com/';
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
