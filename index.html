@@ -580,7 +580,7 @@
       <div class="app-topbar-left">
         <div class="app-live-dot"></div>
         <span class="app-label">Product Research Platform &nbsp;·&nbsp; Live app</span>
-        <span class="app-url">product-research-platform.onrender.com//span>
+        <span class="app-url">product-research-platform.onrender.com/</span>
       </div>
       <button class="app-close" onclick="closeAppModal()">✕ &nbsp;Close</button>
     </div>
@@ -729,7 +729,7 @@
   function openPrototype() {
     const modal = document.getElementById('proto-modal');
     const frame = document.getElementById('proto-frame');
-    frame.src = 'ai-qc-prototype.html';
+    frame.src = 'ai-qc-prototype.html?v=' + Date.now(); // always load the latest version
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
