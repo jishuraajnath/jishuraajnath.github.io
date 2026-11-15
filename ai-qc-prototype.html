@@ -381,7 +381,9 @@ body {
   padding: 3rem;
   min-height: 600px;
   position: relative;
+  flex-shrink: 0;
 }
+.page-num-wrap { flex-shrink: 0; }
 
 .doc-header-line {
   display: flex;
@@ -758,6 +760,75 @@ body {
 }
 .intro-cta:hover { background: #e83032; }
 
+/* ── APPLIED CHANGES ── */
+.accepted { animation: acc-flash 2.2s ease-out; border-radius: 2px; }
+@keyframes acc-flash { 0% { background: rgba(26,127,75,0.28); } 100% { background: transparent; } }
+.tc-block { display: block; }
+
+/* Tracked changes (Word-style) */
+.tc-ins { color: var(--blue); text-decoration: underline; text-decoration-color: var(--blue); text-underline-offset: 2px; cursor: help; }
+.tc-del { color: #C0392B; text-decoration: line-through; text-decoration-color: #C0392B; cursor: help; }
+.tc-block .tc-del, .tc-block .tc-ins { display: block; }
+.tc-block .tc-ins { text-decoration: none; }
+.tc-block .tc-ins .ae-table-wrap { border-left: 3px solid var(--blue); padding-left: 0.6rem; }
+.doc-para.changed { position: relative; }
+.doc-para.changed::before {
+  content: ''; position: absolute; left: -1.4rem; top: 0.35rem; bottom: 0.35rem;
+  width: 2px; background: var(--text);
+}
+body.final-view .tc-del { display: none; }
+body.final-view .tc-ins { color: inherit; text-decoration: none; }
+body.final-view .tc-block .tc-ins .ae-table-wrap { border-left: none; padding-left: 0; }
+body.final-view .doc-para.changed::before { display: none; }
+
+/* Comments */
+.comment-anchor { background: rgba(255,200,0,0.22); border-bottom: 1px dashed #E6A800; }
+.comment-badge {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; margin-left: 3px; border-radius: 3px;
+  background: #E6A800; color: #fff; font-size: 0.6rem; font-family: var(--sans);
+  cursor: pointer; vertical-align: middle; top: -2px; outline: none;
+}
+.comment-pop {
+  display: none; position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%);
+  width: 220px; background: var(--canvas); border: 1px solid var(--border2);
+  border-left: 3px solid #E6A800; border-radius: 4px; box-shadow: var(--shadow-lg);
+  padding: 0.5rem 0.65rem; font-family: var(--sans); font-size: 0.74rem; line-height: 1.5;
+  color: var(--text); text-align: left; z-index: 50; white-space: normal;
+}
+.comment-pop .cp-meta { font-family: var(--mono); font-size: 0.6rem; color: var(--dim); margin-bottom: 0.2rem; }
+.comment-badge.open .comment-pop { display: block; }
+.comment-badge:hover { filter: brightness(0.92); }
+.comment-badge.open { box-shadow: 0 0 0 2px rgba(230,168,0,0.35); }
+
+.verified-badge {
+  display: inline-block; margin-left: 4px; padding: 0 0.35rem; border-radius: 3px;
+  font-family: var(--mono); font-size: 0.58rem; color: var(--green);
+  background: var(--green-bg); border: 1px solid rgba(26,127,75,0.3);
+  vertical-align: middle; position: relative; top: -2px;
+}
+
+/* Inserted AE table */
+.ae-table-wrap { margin: 0.25rem 0 0.5rem; }
+.ae-caption { font-family: var(--serif); font-size: 0.8rem; font-weight: 600; margin-bottom: 0.4rem; text-align: left; }
+.ae-table { width: 100%; border-collapse: collapse; font-family: var(--serif); font-size: 0.8rem; line-height: 1.5; }
+.ae-table th { text-align: left; font-weight: 600; border-top: 1.5px solid var(--text); border-bottom: 1px solid var(--text); padding: 0.3rem 0.4rem; }
+.ae-table td { padding: 0.2rem 0.4rem; }
+.ae-table td:last-child, .ae-table th:last-child { text-align: right; white-space: nowrap; }
+.ae-table tr.soc td { font-weight: 600; padding-top: 0.4rem; }
+.ae-table tr.pt td:first-child { padding-left: 1.4rem; }
+.ae-table tbody tr:last-child td { border-bottom: 1.5px solid var(--text); }
+.ae-foot { font-family: var(--serif); font-size: 0.7rem; color: var(--muted); margin-top: 0.3rem; text-align: left; line-height: 1.5; }
+
+/* Suggested change preview in panel */
+.pic-suggest { margin-top: 0.6rem; padding: 0.5rem 0.6rem; background: var(--canvas); border: 1px solid var(--border); border-radius: 4px; }
+.ps-label { font-family: var(--mono); font-size: 0.58rem; color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.25rem; }
+.ps-body { font-family: var(--serif); font-size: 0.78rem; line-height: 1.6; color: var(--text); }
+.ps-body del { color: #C0392B; }
+.ps-body ins { color: var(--blue); text-decoration: underline; }
+
+.ribbon-btn.markup-on { background: var(--blue-bg); color: var(--blue); }
+
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
@@ -818,6 +889,9 @@ body {
     <button class="filter-chip" onclick="doFilter(this,'data')">● Data errors</button>
     <button class="filter-chip" onclick="doFilter(this,'struct')">● Structure</button>
     <button class="filter-chip" onclick="doFilter(this,'grammar')">● Grammar</button>
+    <div class="ribbon-sep"></div>
+    <span class="ribbon-label">Markup:</span>
+    <button class="ribbon-btn markup-on" id="btn-markup" onclick="toggleMarkup()">All markup</button>
     <div class="ribbon-sep"></div>
     <button class="ribbon-btn" onclick="showToast('↓','Downloading QC report as PDF…')">↓ Download report</button>
     <button class="ribbon-btn" onclick="showToast('⎘','Summary copied to clipboard.')">⎘ Copy summary</button>
@@ -935,9 +1009,9 @@ body {
 
             <div class="doc-section-h">12.5 &nbsp; Adverse Events Summary</div>
 
-            <p class="doc-para">
+            <div class="doc-para">
               <span class="flag flag-struct" data-id="f5" onclick="openFlag('f5')">Table 12.5.1 summarising treatment-emergent adverse events (TEAEs) by system organ class should appear here as per ICH E3 guidelines Section 12.3.2.</span><span class="flag-num fn-struct" data-id="f5" onclick="openFlag('f5')">S1</span>
-            </p>
+            </div>
 
             <p class="doc-para">
               A total of 24 subjects (80%) experienced at least one TEAE. The most frequent TEAEs were headache (36.7%), nausea (26.7%), and fatigue (20.0%).
@@ -972,6 +1046,10 @@ body {
             <div class="pic-type" id="pic-type">—</div>
             <div class="pic-title" id="pic-title">—</div>
             <div class="pic-desc" id="pic-desc">—</div>
+            <div class="pic-suggest">
+              <div class="ps-label">Suggested change</div>
+              <div class="ps-body" id="ps-body">—</div>
+            </div>
           </div>
 
           <div class="pdf-viewer">
@@ -986,8 +1064,8 @@ body {
 
           <div class="panel-actions">
             <div class="action-label">Resolve this issue</div>
-            <button class="action-btn ab-accept"  id="ab-accept"  onclick="resolve('accept')">✓ &nbsp;Accept suggested change</button>
-            <button class="action-btn ab-tracked" id="ab-tracked" onclick="resolve('tracked')">⊕ &nbsp;Accept with tracked change</button>
+            <button class="action-btn ab-accept"  id="ab-accept"  onclick="resolve('accept')">✓ &nbsp;<span id="ab-accept-label">Accept suggested change</span></button>
+            <button class="action-btn ab-tracked" id="ab-tracked" onclick="resolve('tracked')">⊕ &nbsp;<span id="ab-tracked-label">Accept with tracked change</span></button>
             <button class="action-btn ab-comment" id="ab-comment" onclick="toggleComment()">✎ &nbsp;Add comment</button>
             <textarea class="comment-input" id="comment-input" rows="2" placeholder="Type your comment…"></textarea>
             <button class="btn-submit-comment" id="btn-submit-comment" onclick="resolve('comment')">Submit comment</button>
@@ -1090,7 +1168,53 @@ const FLAGS = {
     suggest:'Compile and attach Appendix 16.1.3 before sign-off' }
 };
 
+// What each fix writes into the document. newHtml: null means no text change (verify only).
+const AE_TABLE = `<div class="ae-table-wrap">
+  <div class="ae-caption">Table 12.5.1 &nbsp; Treatment-Emergent Adverse Events by System Organ Class and Preferred Term (Safety Population, N=30)</div>
+  <table class="ae-table">
+    <thead><tr><th>System Organ Class<br>&emsp;Preferred Term</th><th>n (%)</th></tr></thead>
+    <tbody>
+      <tr><td>Subjects with at least one TEAE</td><td>24 (80.0)</td></tr>
+      <tr class="soc"><td>Nervous system disorders</td><td>12 (40.0)</td></tr>
+      <tr class="pt"><td>Headache</td><td>11 (36.7)</td></tr>
+      <tr class="pt"><td>Syncope</td><td>1 (3.3)</td></tr>
+      <tr class="soc"><td>Gastrointestinal disorders</td><td>8 (26.7)</td></tr>
+      <tr class="pt"><td>Nausea</td><td>8 (26.7)</td></tr>
+      <tr class="soc"><td>General disorders and administration site conditions</td><td>6 (20.0)</td></tr>
+      <tr class="pt"><td>Fatigue</td><td>6 (20.0)</td></tr>
+      <tr class="soc"><td>Investigations</td><td>1 (3.3)</td></tr>
+      <tr class="pt"><td>Hepatic enzyme increased</td><td>1 (3.3)</td></tr>
+    </tbody>
+  </table>
+  <div class="ae-foot">Subjects are counted once per system organ class and once per preferred term. Source: TFL output T14.3.1.1.</div>
+</div>`;
+
+const CHANGES = {
+  f1: { newHtml: '412.8 ng/mL' },
+  f2: { newHtml: 'approximately 2.4 hours post-dose' },
+  f3: { newHtml: null, acceptLabel: 'Confirm notation (no text change)', previewText: 'No text change. Unit notation ng·h/mL confirmed as consistent with source.' },
+  f4: { newHtml: '23.2% CV' },
+  f5: { newHtml: AE_TABLE, block: true, acceptLabel: 'Insert Table 12.5.1', trackedLabel: 'Insert table as tracked change', previewText: 'Replace placeholder with Table 12.5.1 (TEAEs by SOC and PT), generated from TFL output.' },
+  f6: { newHtml: 'No subjects discontinued the study due to adverse events.' },
+  f7: { newHtml: 'Individual narratives for SAEs are provided in Appendix 16.1.3.', acceptLabel: 'Link Appendix 16.1.3', previewText: null }
+};
+
 let activeFlag = null;
+let finalView = false;
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+function stamp() {
+  return new Date().toLocaleString([], { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+}
+function toggleMarkup() {
+  finalView = !finalView;
+  document.body.classList.toggle('final-view', finalView);
+  const b = document.getElementById('btn-markup');
+  b.textContent = finalView ? 'Final (no markup)' : 'All markup';
+  b.classList.toggle('markup-on', !finalView);
+}
 let resolved = {};
 let resolvedCount = 0;
 const TOTAL = 7;
@@ -1170,6 +1294,18 @@ function openFlag(id) {
   ['ab-accept','ab-tracked','ab-comment'].forEach(id => {
     document.getElementById(id).disabled = false;
   });
+
+  // Suggested change preview + context-aware button labels
+  const ch = CHANGES[id];
+  const oldText = document.querySelector(`.flag[data-id="${id}"]`).textContent.trim();
+  document.getElementById('ps-body').innerHTML = ch.previewText
+    ? escapeHtml(ch.previewText)
+    : `<del>${escapeHtml(oldText)}</del> → <ins>${ch.newHtml}</ins>`;
+  document.getElementById('ab-accept-label').textContent = ch.acceptLabel || 'Accept suggested change';
+  document.getElementById('ab-tracked-label').textContent = ch.newHtml === null
+    ? 'Nothing to track (no text change)'
+    : (ch.trackedLabel || 'Accept with tracked change');
+  document.getElementById('ab-tracked').disabled = ch.newHtml === null;
   document.getElementById('comment-input').classList.remove('visible');
   document.getElementById('comment-input').value = '';
   document.getElementById('btn-submit-comment').style.display = 'none';
@@ -1187,20 +1323,60 @@ function resolve(action) {
   if (!activeFlag) return;
   const id = activeFlag;
   const f = FLAGS[id];
-  const msgs = { accept:`✓ "${f.suggest}" applied`, tracked:'⊕ Accepted with tracked change', comment:'✎ Comment saved' };
+  const ch = CHANGES[id];
+  const span = document.querySelector(`.flag[data-id="${id}"]`);
+  const num  = document.querySelector(`.flag-num[data-id="${id}"]`);
+  const para = span.closest('.doc-para');
+  const oldHtml = span.innerHTML;
+  let msg;
 
-  document.querySelectorAll(`[data-id="${id}"]`).forEach(el => {
-    el.style.opacity = '0.28';
-    el.style.textDecoration = 'line-through';
-    el.style.pointerEvents = 'none';
-    el.style.cursor = 'default';
-  });
+  if (action === 'comment') {
+    const text = document.getElementById('comment-input').value.trim();
+    if (!text) { document.getElementById('comment-input').focus(); return; }
+    span.className = 'comment-anchor';
+    const bubble = document.createElement('span');
+    bubble.className = 'comment-badge';
+    bubble.tabIndex = 0;
+    bubble.title = 'Click to view comment';
+    bubble.innerHTML = `<svg width="10" height="10" viewBox="0 0 16 16" fill="#fff"><path d="M2 2h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6l-4 3v-3H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/></svg>
+      <span class="comment-pop"><div class="cp-meta">You · ${stamp()} · on ${escapeHtml(f.title)}</div>${escapeHtml(text)}</span>`;
+    bubble.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = bubble.classList.contains('open');
+      document.querySelectorAll('.comment-badge.open').forEach(b => b.classList.remove('open'));
+      if (!open) bubble.classList.add('open');
+    });
+    num.replaceWith(bubble);
+    msg = '✎ Comment added. Click the bubble to view it.';
+  } else if (action === 'accept') {
+    span.className = 'accepted' + (ch.block ? ' tc-block' : '');
+    if (ch.newHtml === null) {
+      const v = document.createElement('span');
+      v.className = 'verified-badge';
+      v.textContent = '✓ verified';
+      num.replaceWith(v);
+      msg = '✓ Notation confirmed. No text change needed.';
+    } else {
+      span.innerHTML = ch.newHtml;
+      num.remove();
+      msg = '✓ Change applied to the document';
+    }
+  } else { // tracked
+    const who = `You · ${stamp()}`;
+    span.className = ch.block ? 'tc-block' : '';
+    span.innerHTML = `<del class="tc-del" title="Deleted: ${who}">${oldHtml}</del><ins class="tc-ins" title="Inserted: ${who}">${ch.newHtml}</ins>`;
+    num.remove();
+    para.classList.add('changed');
+    msg = '⊕ Tracked change inserted. Toggle "Markup" to preview the final text.';
+  }
+  span.removeAttribute('onclick');
+  span.style.visibility = '';
 
   resolved[id] = f.title;
   resolvedCount++;
   updateSidebar();
   closePanel();
-  showToast('✓', msgs[action]);
+  showToast('', msg);
   if (resolvedCount === TOTAL) document.getElementById('btn-signoff').disabled = false;
 }
 
@@ -1246,6 +1422,10 @@ function applyFilter(type) {
     el.style.visibility = (type === 'all' || t === type) ? '' : 'hidden';
   });
 }
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('.comment-badge.open').forEach(b => b.classList.remove('open'));
+});
 
 // ── TOAST ────────────────────────────────────────────────────────────────────
 function showToast(icon, msg) {
